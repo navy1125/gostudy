@@ -96,5 +96,5 @@ func main() {
 
 }
 func CharsetReader(charset string, input io.Reader) (io.Reader, error) {
-	return input, nil
+return input,nil 
 }
