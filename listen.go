@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	//"github.com/xuyu/logging"
+	"github.com/xuyu/logging"
 	"io"
 	"log"
 	"net/http"
@@ -20,11 +20,15 @@ func HelloServer(w http.ResponseWriter, req *http.Request) {
 }
 
 func main() {
-	//logger, _ := logging.NewRotationLogger("listenserver.log", "/log/", "060102-15")
-	//logging.SetDefaultLogger(logger)
-	//logging.SetPrefix("LT")
+	logger, err := logging.NewRotationLogger("listenserver.log", "c:\\", "060102-15")
+	if err != nil {
+		fmt.Println(err)
+		return 
+	}
+	logging.SetDefaultLogger(logger)
+	logging.SetPrefix("LT")
 	http.HandleFunc("/hello", HelloServer)
-	err := http.ListenAndServe(":12346", nil)
+	err = http.ListenAndServe(":12346", nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
