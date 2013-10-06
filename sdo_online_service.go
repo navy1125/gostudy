@@ -29,7 +29,9 @@ func HelloServer(w http.ResponseWriter, req *http.Request) {
 		num := row.Int(onlinenum)
 		out_string += strconv.Itoa(id) + "\\" + strconv.Itoa(num) + ";"
 	}
-	io.WriteString(w, out_string)
+	io.WriteString(w, out_string+"\n")
+	io.WriteString(w, req.Header.Get("Accept-Language")+"\n")
+	io.WriteString(w, req.URL.String())
 	logging.Debug("quest online num:%s", req.RemoteAddr)
 }
 
