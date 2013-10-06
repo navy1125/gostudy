@@ -23,6 +23,8 @@ func HelloServer(w http.ResponseWriter, req *http.Request) {
 
 func main() {
 	logger, err := logging.NewRotationLogger("/tmp/listenserver.log", "060102-15")
+	//cookstr, _ := req.Cookie("testcookiename")
+	//io.WriteString(w, "cookie testcookiename:"+cookstr.String()+"\n")
 	if err != nil {
 		fmt.Println(err)
 		return

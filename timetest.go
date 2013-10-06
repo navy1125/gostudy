@@ -22,4 +22,5 @@ func main() {
 }
 func timefunc() {
 	fmt.Println("timer:", time.Now().Unix())
+	time.AfterFunc(time.Second*2, timefunc)
 }
