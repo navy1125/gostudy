@@ -9,7 +9,7 @@ import (
 func main() {
 	//log.Fatal(http.ListenAndServe(":8080", http.FileServer(http.Dir("D:\\work\\gostudy"))))
 	//http.Handle("/gostudy/", http.StripPrefix("/gostudy/", http.FileServer(http.Dir("D:\\work\\gostudy"))))
-	http.Handle("/", http.FileServer(http.Dir("D:\\work\\gostudy")))
+	http.Handle("/", http.FileServer(http.Dir("e:\\tmp")))
 	sm1 := http.NewServeMux()
 	sm2 := http.NewServeMux()
 	sm1.HandleFunc("/", hf1)

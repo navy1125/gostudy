@@ -15,15 +15,15 @@ func HelloServer(w http.ResponseWriter, req *http.Request) {
 	io.WriteString(w, req.URL.String())
 	io.WriteString(w, req.Form.Encode())
 	io.WriteString(w, req.PostForm.Encode()+"\n")
-	cookstr, _ := req.Cookie("testcookiename")
-	io.WriteString(w, "cookie testcookiename:"+cookstr.String()+"\n")
+	//cookstr, _ := req.Cookie("testcookiename")
+	//io.WriteString(w, "cookie testcookiename:"+cookstr.String()+"\n")
 }
 
 func main() {
-	logger, err := logging.NewRotationLogger("listenserver.log", "c:\\", "060102-15")
+	logger, err := logging.NewRotationLogger("c:\\listenserver.log", "060102-15")
 	if err != nil {
 		fmt.Println(err)
-		return 
+		return
 	}
 	logging.SetDefaultLogger(logger)
 	logging.SetPrefix("LT")
