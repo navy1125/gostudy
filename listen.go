@@ -16,7 +16,7 @@ func HelloServer(w http.ResponseWriter, req *http.Request) {
 	io.WriteString(w, req.Form.Encode())
 	io.WriteString(w, req.PostForm.Encode()+"\n")
 	if cookstr, err := req.Cookie("testcookiename"); err == nil {
-		io.WriteString(w, "cookie testcookiename:"+cookstr.String()+"\n")
+		io.WriteString(w, " cookie testcookiename:"+cookstr.String()+"\n")
 	}
 
 }
