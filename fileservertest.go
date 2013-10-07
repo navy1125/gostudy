@@ -2,11 +2,17 @@ package main
 
 import (
 	"fmt"
+	"github.com/simonz05/godis/redis"
 	"log"
 	"net/http"
 )
 
+var (
+	redis_handle *redis.Client
+)
+
 func main() {
+	redis_handle := redis.New("tcp:112.65.197.72:6379", 0, "")
 	//log.Fatal(http.ListenAndServe(":8080", http.FileServer(http.Dir("D:\\work\\gostudy"))))
 	//http.Handle("/gostudy/", http.StripPrefix("/gostudy/", http.FileServer(http.Dir("D:\\work\\gostudy"))))
 	http.Handle("/", http.FileServer(http.Dir("e:\\tmp")))
