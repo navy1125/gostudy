@@ -3,6 +3,7 @@ package main
 import (
 	gotcp "../gotcp"
 	"fmt"
+	"math/rand"
 	"net"
 	"time"
 )
@@ -15,7 +16,9 @@ func main() {
 		return
 	}
 	fmt.Println("new connection:", conn.RemoteAddr())
-	task := gotcp.NewTask(conn)
+	task := gotcp.NewTask(conn, "Client")
+	task.Id = rand.Int63()
+	task.Name = conn.RemoteAddr().String()
 	task.Start()
 	tick := time.Tick(time.Second * 5)
 	for {

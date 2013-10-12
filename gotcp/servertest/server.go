@@ -32,7 +32,7 @@ func main() {
 			continue
 		}
 		fmt.Println("new connection:", conn.RemoteAddr())
-		task := gotcp.NewTask(conn)
+		task := gotcp.NewTask(conn, "Server")
 		task.Start()
 	}
 }

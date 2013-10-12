@@ -1,30 +1,27 @@
 package gotcp
 
 import (
-	"encoding/binary"
 	"fmt"
-	"io"
 	"net"
 	"time"
 )
 
 type Task struct {
-	Id              int64
-	Name            string
+	Entry
 	Conn            *net.TCPConn
 	in              chan []byte
 	stop            chan bool
-	handleReadFun   func(conn *net.TCPConn) ([]byte, error)
-	handleWriteFun  func(conn *net.TCPConn, data []byte) error
-	handleParse     func(conn *net.TCPConn, data []byte) (int, error)
-	handleHeartBeat func(conn *net.TCPConn)
+	handleReadFun   func(task *Task) ([]byte, error)
+	handleWriteFun  func(task *Task, data []byte) error
+	handleParse     func(task *Task, data []byte) error
+	handleHeartBeat func(task *Task)
 	heartBeatTime   time.Duration
 	HeartBeatReturn bool
 }
 
-func NewTask(c *net.TCPConn) *Task {
+func NewTask(c *net.TCPConn, name string) *Task {
 	task := &Task{
-		conn:            c,
+		Conn:            c,
 		in:              make(chan []byte),
 		stop:            make(chan bool),
 		handleReadFun:   handleReadFunDefault,
@@ -32,56 +29,36 @@ func NewTask(c *net.TCPConn) *Task {
 		handleParse:     handleParseDefault,
 		handleHeartBeat: handleHeartBeatRequestDefault,
 		heartBeatTime:   time.Second * 10,
-		heartBeatReturn: true,
+		HeartBeatReturn: true,
 	}
+	task.GetEntryName = func() string { return name }
 	return task
 }
-func handleHeartBeatRequestDefault(conn *net.TCPConn) {
-	handleWriteFunDefault(conn, []byte("tick"))
+func (self *Task) SetHhandleReadFun(fun func(task *Task) ([]byte, error)) {
+	self.handleReadFun = fun
 }
-func handleHeartBeatReturnDefault(conn *net.TCPConn) {
-	handleWriteFunDefault(conn, []byte("return tick"))
+func (self *Task) SetHhandleWriteFun(fun func(task *Task, data []byte) error) {
+	self.handleWriteFun = fun
 }
-func handleReadFunDefault(conn *net.TCPConn) ([]byte, error) {
-	var length uint32
-	if err := binary.Read(conn, binary.BigEndian, &length); err != nil {
-		return nil, err
-	}
-	buf := make([]byte, length)
-	_, err := io.ReadFull(conn, buf)
-	return buf, err
+func (self *Task) SetHhandleParseFun(fun func(task *Task, data []byte) error) {
+	self.handleParse = fun
 }
-func handleWriteFunDefault(conn *net.TCPConn, data []byte) error {
-	err := binary.Write(conn, binary.BigEndian, uint32(len(data)))
-	if err != nil {
-		return err
-	}
-	_, err = conn.Write(data)
-	return err
-}
-func handleParseDefault(conn *net.TCPConn, data []byte) (int, error) {
-	switch {
-	case string(data) == "tick":
-		fmt.Println("time tick return")
-		handleHeartBeatReturnDefault(conn)
-		return 1, nil
-	case string(data) == "return tick":
-		return 1, nil
-	}
-	return 0, nil
+func (self *Task) SetHhandleHeartBteaFun(fun func(task *Task), dur time.Duration) {
+	self.handleHeartBeat = fun
+	self.heartBeatTime = dur
 }
 func (self *Task) Start() {
 	go self.startRead()
 	go self.startWrite()
 }
 func (self *Task) Stop() {
-	self.conn.Close()
+	self.Conn.Close()
 	close(self.stop)
 }
 func (self *Task) startRead() {
 	defer close(self.in)
 	for {
-		data, err := self.handleReadFun(self.conn)
+		data, err := self.handleReadFun(self)
 		if err != nil {
 			fmt.Println("read error:", err)
 			break
@@ -95,20 +72,18 @@ LOOP:
 	for {
 		select {
 		case <-heartBeat:
-			self.handleHeartBeat(self.conn)
-			if !self.heartBeatReturn {
-				fmt.Println("timeout error")
+			self.handleHeartBeat(self)
+			if !self.HeartBeatReturn {
+				self.Debug("timeout error")
 				break LOOP
 			}
-			self.heartBeatReturn = false
+			self.HeartBeatReturn = false
 		case data, ok := <-self.in:
 			if !ok {
-				fmt.Println("self.in chan err")
+				self.Debug("self.in chan err")
 				break LOOP
 			}
-			if ret, _ := self.handleParse(self.conn, data); ret == 1 {
-				self.heartBeatReturn = true
-			}
+			self.handleParse(self, data)
 		}
 	}
 }
