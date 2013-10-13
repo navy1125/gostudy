@@ -12,14 +12,16 @@ func handleHeartBeatRequestDefault(task *Task) {
 func handleHeartBeatReturnDefault(task *Task) {
 	handleWriteFunDefault(task, []byte("return tick"))
 }
-func handleReadFunDefault(task *Task) ([]byte, error) {
-	var length uint32
-	if err := binary.Read(task.Conn, binary.BigEndian, &length); err != nil {
+func handleReadFunDefault(task *Task) ([]ReadData, error) {
+	var l uint32
+	if err := binary.Read(task.Conn, binary.BigEndian, &l); err != nil {
 		return nil, err
 	}
-	buf := make([]byte, length)
-	_, err := io.ReadFull(task.Conn, buf)
-	return buf, err
+	data := make([]ReadData, 1)
+	data[0].Length = int(l)
+	data[0].Data = make([]byte, l)
+	_, err := io.ReadFull(task.Conn, data[0].Data)
+	return data, err
 }
 func handleWriteFunDefault(task *Task, data []byte) error {
 	err := binary.Write(task.Conn, binary.BigEndian, uint32(len(data)))

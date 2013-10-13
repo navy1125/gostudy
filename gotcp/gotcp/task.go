@@ -1,17 +1,24 @@
 package gotcp
 
 import (
+	"bytes"
+	"encoding/binary"
 	"fmt"
 	"net"
+	//"reflect"
 	"time"
 )
 
+type ReadData struct {
+	Length int
+	Data   []byte
+}
 type Task struct {
 	Entry
 	Conn            *net.TCPConn
-	in              chan []byte
+	in              chan []ReadData
 	stop            chan bool
-	handleReadFun   func(task *Task) ([]byte, error)
+	handleReadFun   func(task *Task) ([]ReadData, error)
 	handleWriteFun  func(task *Task, data []byte) error
 	handleParse     func(task *Task, data []byte) error
 	handleHeartBeat func(task *Task)
@@ -22,7 +29,7 @@ type Task struct {
 func NewTask(c *net.TCPConn, name string) *Task {
 	task := &Task{
 		Conn:            c,
-		in:              make(chan []byte),
+		in:              make(chan []ReadData),
 		stop:            make(chan bool),
 		handleReadFun:   handleReadFunDefault,
 		handleWriteFun:  handleWriteFunDefault,
@@ -34,19 +41,42 @@ func NewTask(c *net.TCPConn, name string) *Task {
 	task.GetEntryName = func() string { return name }
 	return task
 }
-func (self *Task) SetHhandleReadFun(fun func(task *Task) ([]byte, error)) {
+func (self *Task) SetHandleReadFun(fun func(task *Task) ([]ReadData, error)) {
 	self.handleReadFun = fun
 }
-func (self *Task) SetHhandleWriteFun(fun func(task *Task, data []byte) error) {
+func (self *Task) SetHandleWriteFun(fun func(task *Task, data []byte) error) {
 	self.handleWriteFun = fun
 }
-func (self *Task) SetHhandleParseFun(fun func(task *Task, data []byte) error) {
+func (self *Task) SetHandleParseFun(fun func(task *Task, data []byte) error) {
 	self.handleParse = fun
 }
-func (self *Task) SetHhandleHeartBteaFun(fun func(task *Task), dur time.Duration) {
+func (self *Task) SetHandleHeartBteaFun(fun func(task *Task), dur time.Duration) {
 	self.handleHeartBeat = fun
 	self.heartBeatTime = dur
 }
+
+/*
+func (self *Task) SendCmd(ptr unsafe.Pointer, length int) {
+	data := make([]byte, 0, 0)
+	header := (*reflect.SliceHeader)(unsafe.Pointer(&data))
+	header.Data = (*reflect.SliceHeader)(ptr).Data
+	header.Len = length
+	header.Cap = length
+	self.handleWriteFun(self, data)
+
+}
+//*/
+func (self *Task) SendCmd(v interface{}) {
+	buf := new(bytes.Buffer)
+	if err := binary.Write(buf, binary.LittleEndian, v); err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(len(buf.Bytes()))
+	self.handleWriteFun(self, buf.Bytes())
+
+}
+
 func (self *Task) Start() {
 	go self.startRead()
 	go self.startWrite()
@@ -78,12 +108,14 @@ LOOP:
 				break LOOP
 			}
 			self.HeartBeatReturn = false
-		case data, ok := <-self.in:
+		case datas, ok := <-self.in:
 			if !ok {
 				self.Debug("self.in chan err")
 				break LOOP
 			}
-			self.handleParse(self, data)
+			for _, data := range datas {
+				self.handleParse(self, data.Data)
+			}
 		}
 	}
 }
