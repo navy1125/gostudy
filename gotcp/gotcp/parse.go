@@ -31,7 +31,7 @@ func handleWriteFunDefault(task *Task, data []byte) error {
 	_, err = task.Conn.Write(data)
 	return err
 }
-func handleParseDefault(task *Task, data []byte) error {
+func handleParseDefault(task *Task, data []byte) bool {
 	switch {
 	case string(data) == "tick":
 		task.Debug("time tick return")
@@ -39,6 +39,8 @@ func handleParseDefault(task *Task, data []byte) error {
 		task.HeartBeatReturn = true
 	case string(data) == "return tick":
 		task.HeartBeatReturn = true
+	default:
+		return false
 	}
-	return nil
+	return true
 }

@@ -9,6 +9,10 @@ import (
 	"time"
 )
 
+type HandleMessageFunc func(task *Task, data []byte)
+
+type HanldeMessageMap [255][256]HandleMessageFunc
+
 type ReadData struct {
 	Length int
 	Data   []byte
@@ -20,10 +24,11 @@ type Task struct {
 	stop            chan bool
 	handleReadFun   func(task *Task) ([]ReadData, error)
 	handleWriteFun  func(task *Task, data []byte) error
-	handleParse     func(task *Task, data []byte) error
+	handleParse     func(task *Task, data []byte) bool
 	handleHeartBeat func(task *Task)
 	heartBeatTime   time.Duration
 	HeartBeatReturn bool
+	handleMessage   *HanldeMessageMap
 }
 
 func NewTask(c *net.TCPConn, name string) *Task {
@@ -41,13 +46,33 @@ func NewTask(c *net.TCPConn, name string) *Task {
 	task.GetEntryName = func() string { return name }
 	return task
 }
+func (self *Task) SetHandleMessage(handle *HanldeMessageMap) {
+	self.handleMessage = handle
+}
+func (self *Task) ParseMessage(data []byte) {
+	if self.handleMessage == nil {
+		self.Error("no handleMessage:%d,%d", data[0], data[1])
+		return
+	}
+	if len(data) < 2 {
+		self.Error("message can not less then 2 bytes")
+		return
+	}
+	switch fun := self.handleMessage[data[0]][data[1]]; fun {
+	case nil:
+		self.Error("no parse func for message2:%d,%d", data[0], data[1])
+		return
+	default:
+		fun(self, data)
+	}
+}
 func (self *Task) SetHandleReadFun(fun func(task *Task) ([]ReadData, error)) {
 	self.handleReadFun = fun
 }
 func (self *Task) SetHandleWriteFun(fun func(task *Task, data []byte) error) {
 	self.handleWriteFun = fun
 }
-func (self *Task) SetHandleParseFun(fun func(task *Task, data []byte) error) {
+func (self *Task) SetHandleParseFun(fun func(task *Task, data []byte) bool) {
 	self.handleParse = fun
 }
 func (self *Task) SetHandleHeartBteaFun(fun func(task *Task), dur time.Duration) {
@@ -114,7 +139,9 @@ LOOP:
 				break LOOP
 			}
 			for _, data := range datas {
-				self.handleParse(self, data.Data)
+				if ok := self.handleParse(self, data.Data); !ok {
+					self.ParseMessage(data.Data)
+				}
 			}
 		}
 	}

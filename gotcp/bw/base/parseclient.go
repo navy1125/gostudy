@@ -20,7 +20,6 @@ func HandleReadFunBw(task *gotcp.Task) ([]gotcp.ReadData, error) {
 	if err := binary.Read(task.Conn, binary.LittleEndian, &l); err != nil {
 		return nil, err
 	}
-	fmt.Println("readlen:", l)
 	data := make([]gotcp.ReadData, 1)
 	data[0].Length = int(l)
 	data[0].Data = make([]byte, l)
@@ -28,7 +27,6 @@ func HandleReadFunBw(task *gotcp.Task) ([]gotcp.ReadData, error) {
 	return data, err
 }
 func HandleWriteFunBw(task *gotcp.Task, data []byte) error {
-	fmt.Println("write data:", data[0], data[1])
 	err := binary.Write(task.Conn, binary.LittleEndian, uint16(len(data)))
 	if err != nil {
 		return err
@@ -40,7 +38,7 @@ func HandleWriteFunBw(task *gotcp.Task, data []byte) error {
 	_, err = task.Conn.Write(data)
 	return err
 }
-func HandleParseBw(task *gotcp.Task, data []byte) error {
+func HandleParseBw(task *gotcp.Task, data []byte) bool {
 	fmt.Println(data[0], data[1])
 	switch byCmd := data[0]; byCmd {
 	case Cmd.CMD_NULL:
@@ -51,8 +49,8 @@ func HandleParseBw(task *gotcp.Task, data []byte) error {
 		case Cmd.CLIENT_PARA_NULL:
 			task.HeartBeatReturn = true
 		}
-	case 2:
-		task.HeartBeatReturn = true
+	default:
+		return false
 	}
-	return nil
+	return true
 }

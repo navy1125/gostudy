@@ -31,6 +31,7 @@ func main() {
 	task.SetHandleWriteFun(base.HandleWriteFunBw)
 	task.SetHandleParseFun(base.HandleParseBw)
 	task.SetHandleHeartBteaFun(base.HandleHeartBeatRequestBw, time.Second*10)
+	task.SetHandleMessage(&gmHandleMessageMap)
 	cmd := Cmd.NewStRequestLoginGmUserCmd()
 	cmd.Version = 2012102901
 	for i, b := range "webmaster" {
