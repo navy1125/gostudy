@@ -5,15 +5,16 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	//"log"
+	"log"
 	"mime/multipart"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
-	//"net/url"
 )
 
 func main() {
+	resp, err := http.PostForm("http://112.65.197.72:8080/post", url.Values{"uuid": {"1234"}, "data": {"12"}})
 	//resp, err := http.Get("http://www.bwgame.com.cn")
 	//resp, err := http.Get("http://127.0.0.1:8080/client.go")
 	//resp, err := http.Get("http://127.0.0.1:12346/hello")
@@ -21,6 +22,7 @@ func main() {
 	//resp, err := http.Get("http://192.168.85.71:8080/fileservertest.go")
 	/*f, _ := os.Open("c:\\test.xml")
 	resp, err := http.Post("http://192.168.85.71:8080/post", "go", f)
+	//*/
 
 	if err != nil {
 		log.Fatal("http.Get Err:", err)
@@ -35,12 +37,11 @@ func main() {
 		fmt.Println(key, value)
 	}
 	fmt.Printf("%s", text)
-	//*/
 	//http.SetCookie(w, cookie)
 	//resp.Body.Close()
-	if err := postFile("c:\\test.xml", "http://192.168.85.71:8080/post"); err != nil {
-		fmt.Println(err)
-	}
+	//if err := postFile("c:\\test.xml", "http://192.168.85.71:8080/post"); err != nil {
+	//	fmt.Println(err)
+	//}
 }
 
 func postFile(filename string, taretUrl string) error {

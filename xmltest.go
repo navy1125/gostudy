@@ -53,13 +53,35 @@ func main() {
 		Text    []Text   `xml:"text"`
 	}
 	var vin2 Filter
+	//var vin2 string
 	fin2, _ := os.Open("e:\\tmp\\filters_chat_tw_V3.xml")
 	dec2 := xml.NewDecoder(fin2)
-	dec2.Decode(&vin2)
-	fmt.Println(len(vin2.Text))
-	//for i, v2 := range vin2.Text {
-	//	fmt.Println(i, v2.World)
-	//}
+	//dec2.Decode(&vin2)
+	//fmt.Print(vin2)
+	for {
+		t, err := dec2.Token()
+		if err != nil {
+			fmt.Println("err:", err)
+			break
+		}
+		switch value := t.(type) {
+		case xml.StartElement:
+			fmt.Println("xml.StartElement1", value.Name.Space, value.Name.Local)
+			for _, v := range value.Attr {
+				fmt.Println("value.Attr", v.Name.Space, v.Name.Local, v.Value)
+			}
+		case xml.ProcInst:
+			fmt.Println("xml.Directive", value.Target)
+		case xml.CharData:
+			fmt.Println("xml.CharData", string([]byte(value)))
+		}
+	}
+	return
+	//fmt.Println(len(vin2.Text))
+	for i, v2 := range vin2.Text {
+		fmt.Println(i, v2.World)
+	}
+	return
 
 	type Map struct {
 		MapID   int `xml:"mapID,attr"`
