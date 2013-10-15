@@ -11,6 +11,10 @@ import (
 	//"C"
 )
 
+var (
+	TestMap map[string]string
+)
+
 func main() {
 	fmt.Println("USER", os.Getenv("PATH"))
 	defer fmt.Println("Hello, 世界")
@@ -21,7 +25,11 @@ func main() {
 	fmt.Println("aaaaaaaaa", a, b, c)
 	var host = flag.String("host", "", "Server listen host, default 0.0.0.0")
 	fmt.Println("flag test", host)
-	fmt.Println("cpunum:",runtime.NumCPU())
+	fmt.Println("cpunum:", runtime.NumCPU())
 	//fmt.Println("aaaaaaaaa",a,b,c,rand.Intn(2))
 	//fmt.Println("C.random", int(C.random()))
+	TestMap = make(map[string]string)
+	TestMap["whj"]="wanghaijun@ztgame.com"
+	fmt.Println(TestMap)
+	fmt.Println(TestMap["whj"])
 }
