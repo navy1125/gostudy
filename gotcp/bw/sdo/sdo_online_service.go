@@ -23,7 +23,15 @@ var (
 func OnlineServer(w http.ResponseWriter, req *http.Request) {
 	rows, res, err := db.Query("show tables")
 	if err != nil {
-		logging.Error("select err:", err)
+		err = db.Connect()
+		if err != nil {
+			logging.Error("db connect error:%s", err.Error())
+			return
+		}
+	}
+	rows, res, err = db.Query("show tables")
+	if err != nil {
+		logging.Error("select err:%s", err.Error())
 		return
 	}
 	zones := make(map[int]int)
@@ -41,7 +49,7 @@ func OnlineServer(w http.ResponseWriter, req *http.Request) {
 	query_string := "select * from ONLINENUM_TODAY where timestamp_min = " + strconv.Itoa(min)
 	rows, res, err = db.Query(query_string)
 	if err != nil {
-		logging.Error("select err:", err)
+		logging.Error("select err:%s", err.Error())
 	}
 	var out_string string
 	for _, row := range rows {
@@ -62,15 +70,18 @@ func main() {
 	config.SetConfig("logfilename", *flag.String("logfilename", "/log/logfilename.log", "log file name"))
 	config.SetConfig("deamon", *flag.String("deamon", "false", "need run as demo"))
 	config.SetConfig("port", *flag.String("port", "8000", "http port "))
+	config.SetConfig("log", *flag.String("log", "debug", "logger level "))
 	if err := config.LoadFromFile(config.GetConfigStr("config"), "SdoOnlineServer"); err != nil {
 		fmt.Println(err)
 		return
 	}
-	logger, err := logging.NewRotationLogger(config.GetConfigStr("logfilename"), "060102-15")
+	logger, err := logging.NewTimeRotationHandler(config.GetConfigStr("logfilename"), "060102-15")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
+	logger.SetLevel(logging.DEBUG)
+	logging.AddHandler("SDO", logger)
 	mysqlurl := config.GetConfigStr("mysql")
 	if ok, err := regexp.MatchString("^mysql://.*:.*@.*/.*$", mysqlurl); ok == false || err != nil {
 		logging.Error("mysql config syntax err:%s", mysqlurl)
@@ -84,14 +95,12 @@ func main() {
 	db = mysql.New("tcp", "", mysqlurls[2]+":"+mysqlurls[3], mysqlurls[0], mysqlurls[1], mysqlurls[4])
 	err = db.Connect()
 	if err != nil {
-		logging.Error("db connect error:", err)
+		logging.Error("db connect error:%s", err.Error())
 		return
 	}
-	logging.SetDefaultLogger(logger)
-	logging.SetPrefix("SDO")
 	http.HandleFunc("/online", OnlineServer)
 	err = http.ListenAndServe(":"+config.GetConfigStr("port"), nil)
 	if err != nil {
-		logging.Error("ListenAndServe: ", err)
+		logging.Error("ListenAndServe:%s", err.Error())
 	}
 }
