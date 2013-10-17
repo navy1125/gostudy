@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/GXTime/logging"
 	"github.com/navy1125/config"
-	"github.com/xuyu/logging"
 	mysql "github.com/ziutek/mymysql/autorc"
 	_ "github.com/ziutek/mymysql/native" // Native engine
 	"io"
@@ -28,7 +28,7 @@ func OnlineServer(w http.ResponseWriter, req *http.Request) {
 	}
 	zones := make(map[int]int)
 	for _, row := range rows {
-		tname := res.Map("Tables_in_" + config.GetConfigStr("db"))
+		tname := res.Map("Tables_in_" + config.GetConfigStr("dbname"))
 		if ok, _ := regexp.MatchString("USER_DATA_", row.Str(tname)); ok == true {
 			zoneid := strings.Replace(row.Str(tname), "USER_DATA_", "", 1)
 			id, _ := strconv.Atoi(zoneid)
@@ -83,7 +83,7 @@ func main() {
 	mysqlurl = strings.Replace(mysqlurl, "@", ":", 1)
 	mysqlurl = strings.Replace(mysqlurl, "/", ":", 1)
 	mysqlurls := strings.Split(mysqlurl, ":")
-	config.SetConfig("db", mysqlurls[4])
+	config.SetConfig("dbname", mysqlurls[4])
 	db = mysql.New("tcp", "", mysqlurls[2]+":"+mysqlurls[3], mysqlurls[0], mysqlurls[1], mysqlurls[4])
 	if err != nil {
 		logging.Error("db connect error:%s", err.Error())
