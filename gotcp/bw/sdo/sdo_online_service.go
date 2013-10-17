@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/navy1125/config"
 	"github.com/xuyu/logging"
-	"github.com/ziutek/mymysql/mysql"
+	mysql "github.com/ziutek/mymysql/autorc"
 	_ "github.com/ziutek/mymysql/native" // Native engine
 	"io"
 	"net/http"
@@ -16,20 +16,12 @@ import (
 )
 
 var (
-	db mysql.Conn
+	db *mysql.Conn
 )
 
 // hello world, the web server
 func OnlineServer(w http.ResponseWriter, req *http.Request) {
 	rows, res, err := db.Query("show tables")
-	if err != nil {
-		err = db.Connect()
-		if err != nil {
-			logging.Error("db connect error:%s", err.Error())
-			return
-		}
-	}
-	rows, res, err = db.Query("show tables")
 	if err != nil {
 		logging.Error("select err:%s", err.Error())
 		return
@@ -61,7 +53,7 @@ func OnlineServer(w http.ResponseWriter, req *http.Request) {
 		out_string += strconv.Itoa(id) + "\\" + strconv.Itoa(num) + ";"
 	}
 	io.WriteString(w, out_string+"\n")
-	logging.Debug("quest online num:%s", req.RemoteAddr)
+	logging.Debug("quest online num:%s,%s", req.RemoteAddr, req.URL.Path)
 }
 
 func main() {
@@ -93,7 +85,6 @@ func main() {
 	mysqlurls := strings.Split(mysqlurl, ":")
 	config.SetConfig("db", mysqlurls[4])
 	db = mysql.New("tcp", "", mysqlurls[2]+":"+mysqlurls[3], mysqlurls[0], mysqlurls[1], mysqlurls[4])
-	err = db.Connect()
 	if err != nil {
 		logging.Error("db connect error:%s", err.Error())
 		return
