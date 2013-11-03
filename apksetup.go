@@ -22,6 +22,7 @@ func SetupServer(ws *websocket.Conn) {
 	for {
 		err := websocket.Message.Receive(ws, &message)
 		if err != nil {
+			delete(setupMap, ws)
 			log.Print("Receive error - stopping worker: ", err)
 			break
 		}
