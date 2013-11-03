@@ -3,19 +3,21 @@ package main
 import (
 	"bytes"
 	"code.google.com/p/go.net/websocket"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"os/exec"
+	"sync"
 )
 
-func RugServer(ws *websocket.Conn) {
+var (
+	logNutex sync.Mutex
+	setupMap map[*websocket.Conn]*websocket.Conn
+)
+
+func SetupServer(ws *websocket.Conn) {
 	var message string
 	//world := createWorld()
-
-	fmt.Print("Launched worker\n")
-	log.Print("Launched worker\n")
 
 	for {
 		err := websocket.Message.Receive(ws, &message)
@@ -24,8 +26,16 @@ func RugServer(ws *websocket.Conn) {
 			break
 		}
 		if message == "setup" {
-			execBat("publish_android.bat", ws)
-			execBat("copy_apk.bat", ws)
+			if len(setupMap) == 0 {
+				setupMap[ws] = ws
+				execBat("publish_android.bat", ws)
+				execBat("copy_apk.bat", ws)
+				for k, _ := range setupMap {
+					delete(setupMap, k)
+				}
+			} else {
+				setupMap[ws] = ws
+			}
 		}
 
 		//err = websocket.JSON.Send(ws, world.Update(message))
@@ -35,18 +45,23 @@ func RugServer(ws *websocket.Conn) {
 		//}
 	}
 }
+func Broadcask(b []byte) {
+	for k, _ := range setupMap {
+		k.Write(b)
+	}
+}
 func execBat(bat string, ws *websocket.Conn) {
 	cmd := exec.Command(bat)
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
-		ws.Write([]byte(err.Error()))
+		Broadcask([]byte(err.Error()))
 	}
 	stdin, err := cmd.StderrPipe()
 	if err != nil {
-		ws.Write([]byte(err.Error()))
+		Broadcask([]byte(err.Error()))
 	}
 	if err := cmd.Start(); err != nil {
-		ws.Write([]byte(err.Error()))
+		Broadcask([]byte(err.Error()))
 	}
 	go outputFunc(stdout, ws)
 	go outputFunc(stdin, ws)
@@ -59,7 +74,9 @@ func outputFunc(r io.ReadCloser, w io.Writer) {
 	for {
 		n, err := r.Read(b.Bytes())
 		if n > 0 {
+			logNutex.Lock()
 			w.Write(b.Bytes()[0:n])
+			logNutex.Unlock()
 		}
 		if err == io.EOF {
 			break
@@ -71,7 +88,8 @@ func outputFunc(r io.ReadCloser, w io.Writer) {
 	}
 }
 func main() {
-	http.Handle("/ws", websocket.Handler(RugServer))
+	setupMap = make(map[*websocket.Conn]*websocket.Conn)
+	http.Handle("/ws", websocket.Handler(SetupServer))
 	http.Handle("/", http.FileServer(http.Dir(".")))
 	http.HandleFunc("/download", downloadFunc)
 	err := http.ListenAndServe("180.168.197.87:18080", nil)
