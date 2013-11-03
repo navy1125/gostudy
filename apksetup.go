@@ -40,13 +40,16 @@ func execBat(bat string, ws *websocket.Conn) {
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
 		ws.Write([]byte(err.Error()))
+		fmt.Print([]byte(err.Error()))
 	}
 	stdin, err := cmd.StderrPipe()
 	if err != nil {
 		ws.Write([]byte(err.Error()))
+		fmt.Print([]byte(err.Error()))
 	}
 	if err := cmd.Start(); err != nil {
 		ws.Write([]byte(err.Error()))
+		fmt.Print([]byte(err.Error()))
 	}
 	go outputFunc(stdout, ws)
 	go outputFunc(stdin, ws)
@@ -60,12 +63,14 @@ func outputFunc(r io.ReadCloser, w io.Writer) {
 		n, err := r.Read(b.Bytes())
 		if n > 0 {
 			w.Write(b.Bytes()[0:n])
+			fmt.Print(b.Bytes()[0:n])
 		}
 		if err == io.EOF {
 			break
 		}
 		if err != nil {
 			w.Write([]byte(err.Error()))
+			fmt.Print([]byte(err.Error()))
 			break
 		}
 	}

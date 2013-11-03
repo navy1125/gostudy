@@ -28,7 +28,7 @@ function logMessage(m) {
 var connection;
 
 function createScreen(s) {
-    connection = new WebSocket('ws://180.168.197.87:8080/ws');
+    connection = new WebSocket('ws://180.168.197.87:18080/ws');
 
     connection.onerror = wsError;
     connection.onopen = wsOpen;
@@ -50,9 +50,9 @@ function wsLogger(msg) {
 
 function wsHandler(e) {
     logMessage(e.data);
-    d = $.parseJSON(e.data);
-    $('#blob').css('margin-left', d.X);
-    $('#blob').css('margin-top', d.Y);
+    //d = $.parseJSON(e.data);
+    //$('#blob').css('margin-left', d.X);
+    //$('#blob').css('margin-top', d.Y);
 }
 
 function getApk() {
