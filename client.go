@@ -2,19 +2,22 @@ package main
 
 import (
 	"bytes"
+	"crypto/md5"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
 	"mime/multipart"
 	"net/http"
-	"net/url"
+	//"net/url"
 	"os"
 	"path/filepath"
+	"strconv"
+	"time"
 )
 
 func main() {
-	resp, err := http.PostForm("http://112.65.197.72:8080/post", url.Values{"uuid": {"1234"}, "data": {"12"}})
+	//resp, err := http.PostForm("http://112.65.197.72:8080/post", url.Values{"uuid": {"1234"}, "data": {"12"}})
 	//resp, err := http.Get("http://www.bwgame.com.cn")
 	//resp, err := http.Get("http://127.0.0.1:8080/client.go")
 	//resp, err := http.Get("http://127.0.0.1:12346/hello")
@@ -24,6 +27,12 @@ func main() {
 	resp, err := http.Post("http://192.168.85.71:8080/post", "go", f)
 	//*/
 
+	tsec := time.Now().Unix()
+	para := "qid=1234" + "&time=" + strconv.Itoa(int(tsec)) + "&server_id=100"
+	hash := md5.New()
+	io.WriteString(hash, para+"344a5ec3dacac264f8603db0f24c9f49")
+	para = fmt.Sprintf("%s&sign=%x", para, hash.Sum(nil))
+	resp, err := http.Get("http://192.168.85.71:8000/bw/kw?" + para)
 	if err != nil {
 		log.Fatal("http.Get Err:", err)
 	}

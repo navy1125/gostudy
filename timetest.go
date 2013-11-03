@@ -12,11 +12,12 @@ func main() {
 	fmt.Printf("%s,%d\n", t.Local(), time.Millisecond)
 	seconds := 10
 	fmt.Println(time.Duration(seconds) * time.Second)
-	fmt.Println(now.Unix(), now.String())
+	zone, _ := now.Z
+	fmt.Println(now.Unix(), zone)
 	timer := time.AfterFunc(time.Second*2, timefunc)
 	defer timer.Stop()
 	for i := 0; i < 10; i++ {
-		time.Sleep(time.Second * 2)
+		//time.Sleep(time.Second * 2)
 		fmt.Println("sleep:", time.Now().Unix())
 	}
 }

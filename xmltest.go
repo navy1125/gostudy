@@ -80,6 +80,7 @@ func main() {
 	//fmt.Println(len(vin2.Text))
 	for i, v2 := range vin2.Text {
 		fmt.Println(i, v2.World)
+		break
 	}
 	return
 
@@ -106,17 +107,21 @@ func main() {
 		fmt.Println(err)
 	}
 	fmt.Println(len(serverinfo.Server))
+FIRST:
 	for _, server := range serverinfo.Server {
 		fmt.Println("server:", server.ID)
 		for _, country := range server.Country {
 			fmt.Println("country:", country.ID)
 			for _, m := range country.Map {
 				fmt.Println("map:", m.MapID)
+				break FIRST
 			}
 		}
 	}
 
 }
 func CharsetReader(charset string, input io.Reader) (io.Reader, error) {
+	return nil, nil
+	fmt.Println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", charset)
 	return input, nil
 }
