@@ -1,7 +1,7 @@
 $(document).ready(function() {
     var s = $('#screen');
 
-    logMessage("Connecting...");
+    logMessage("connect to server..");
     createScreen(s);
 
     $(document).keydown(function(e) {
@@ -22,13 +22,14 @@ $(document).ready(function() {
 });
 
 function logMessage(m) {
-    $('#log').append('<li>'+m+'</li>');
+    $('#log').append('<li>' + m + '</li>');
+    window.scrollTo(0, document.body.scrollHeight)
 }
 
 var connection;
 
 function createScreen(s) {
-    connection = new WebSocket('ws://180.168.197.87:18080/ws');
+    connection = new WebSocket(document.URL.replace("http://","ws://") + 'ws');
 
     connection.onerror = wsError;
     connection.onopen = wsOpen;
@@ -45,10 +46,26 @@ function wsError(error) {
 }
 
 function wsLogger(msg) {
-    return function() { logMessage(msg); }
+    var s = $('#screen');
+    return function () { logMessage(msg); createScreen(s);}
+    
 }
 
 function wsHandler(e) {
+    if (e.data == "setup finish apk") {
+        document.getElementById("log").innerHTML = ""
+        logMessage(e.data);
+        logMessage("downloading");
+        location.href = "/download_apk"
+        return
+    }
+    if (e.data == "setup finish win") {
+        document.getElementById("log").innerHTML = ""
+        logMessage(e.data);
+        logMessage("downloading");
+        location.href = "/download_win"
+        return
+    }
     logMessage(e.data);
     //d = $.parseJSON(e.data);
     //$('#blob').css('margin-left', d.X);
@@ -56,8 +73,14 @@ function wsHandler(e) {
 }
 
 function getApk() {
-    logMessage('Connection opened');
+    location.href = "/download_apk"
+}
+function getWin() {
+    location.href = "/download_win"
 }
 function resetApk() {
-    if (connection) { connection.send('setup'); }
+    if (connection) { connection.send('setup apk'); }
+}
+function resetWin() {
+    if (connection) { connection.send('setup win'); }
 }

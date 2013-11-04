@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="GB2312"?>
+<Zebra>
+	<global>
+		<!-- Use the specified local network device. -->
+		<mysql encode="no">mysql://root:123@127.0.0.1:3306/MonitorServer</mysql>
+		<ifname>eth1</ifname>
+	</global>
+	<ApkServer>
+		<ip>192.168.85.129</ip>
+		<port>18080</port>
+		<loginServerList>loginServerList.xml</loginServerList>
+		<download>proj.android\bin\hxsg-debug.apk</download>
+		<download>js/apksetup.js</download>
+		<bat>test.bat</bat>
+	</ApkServer>
+</Zebra>
