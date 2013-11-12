@@ -5,15 +5,8 @@ import (
 	"fmt"
 	"github.com/GXTime/logging"
 	"github.com/navy1125/config"
-	mysql "github.com/ziutek/mymysql/autorc"
-	_ "github.com/ziutek/mymysql/native" // Native engine
 	"io/ioutil"
 	"net/http"
-)
-
-var (
-	db         *mysql.Conn
-	db_monitor *mysql.Conn
 )
 
 // hello world, the web server
