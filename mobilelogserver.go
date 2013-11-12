@@ -1,6 +1,7 @@
 package main
 
 import (
+	"code.google.com/p/go.net/websocket"
 	"flag"
 	"fmt"
 	"github.com/GXTime/logging"
@@ -9,14 +10,38 @@ import (
 	"net/http"
 )
 
-// hello world, the web server
+var (
+	monitorMap map[*websocket.Conn]*websocket.Conn
+	//utf8
+)
+
+func MonitorServer(ws *websocket.Conn) {
+	var message string
+	//world := createWorld()
+
+	for {
+		err := websocket.Message.Receive(ws, &message)
+		if err != nil {
+			delete(monitorMap, ws)
+			logging.Error("Receive error - stopping worker: ", err.Error())
+			break
+		}
+
+		monitorMap[ws] = ws
+	}
+}
+func Broadcask(b []byte) {
+	for k, _ := range monitorMap {
+		k.Write(b)
+	}
+}
 func LogServer(w http.ResponseWriter, req *http.Request) {
 	defer req.Body.Close()
 	text, err := ioutil.ReadAll(req.Body)
 	if err != nil {
 		logging.Debug("log err:%s", err.Error())
 	}
-	logging.Debug("%s,%s", req.URL.String(), text)
+	logging.Debug("%s,%s,%s", req.RemoteAddr, req.URL.String(), text)
 }
 
 func main() {
@@ -38,6 +63,8 @@ func main() {
 	}
 	logger.SetLevel(logging.DEBUG)
 	logging.AddHandler("MLOG", logger)
+	http.Handle("/ws", websocket.Handler(MonitorServer))
+	http.Handle("/", http.FileServer(http.Dir(".")))
 	http.HandleFunc("/log/fxsj", LogServer)
 	err = http.ListenAndServe(config.GetConfigStr("ip")+":"+config.GetConfigStr("port"), nil)
 	if err != nil {
