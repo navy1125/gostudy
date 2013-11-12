@@ -31,8 +31,13 @@ func MonitorServer(ws *websocket.Conn) {
 	}
 }
 func Broadcask(b []byte) {
-	for k, _ := range monitorMap {
-		k.Write(b)
+	for k, _ := range setupMap {
+		//k.Write(b)
+		out := make([]byte, len(b)*2)
+		if l, err := converter.CodeConvertFunc(b, out); err == nil && l > 0 {
+			//k.Write([]byte("wanghaijun"))
+			k.Write([]byte(out))
+		}
 	}
 }
 func LogServer(w http.ResponseWriter, req *http.Request) {
