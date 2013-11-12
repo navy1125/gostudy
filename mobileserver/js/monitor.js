@@ -35,6 +35,7 @@ function createScreen(s) {
     connection.onopen = wsOpen;
     connection.onclose = wsLogger('Connection closed');
     connection.onmessage = wsHandler;
+	timeTick()
 }
 
 function wsOpen() {
@@ -47,6 +48,7 @@ function wsError(error) {
 
 function wsLogger(msg) {
     var s = $('#screen');
+	clearTimeout(t)
     return function () { logMessage(msg); createScreen(s);}
     
 }
@@ -66,4 +68,9 @@ function getWin() {
 }
 function monitorApk() {
     if (!connection) { createScreen(""); }
+}
+var t
+function timeTick(){
+	if(connection) { connection.send('t'); }   
+	t=setTimeout("timeTick()",10000)
 }
