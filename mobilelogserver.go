@@ -23,21 +23,19 @@ func MonitorServer(ws *websocket.Conn) {
 		err := websocket.Message.Receive(ws, &message)
 		if err != nil {
 			delete(monitorMap, ws)
-			logging.Error("Receive error - stopping worker: ", err.Error())
+			logging.Error("Receive error - stopping worker: %s", err.Error())
 			break
 		}
+		if message == "start" {
+			monitorMap[ws] = ws
+		}
 
-		monitorMap[ws] = ws
 	}
 }
 func Broadcask(b []byte) {
-	for k, _ := range setupMap {
-		//k.Write(b)
-		out := make([]byte, len(b)*2)
-		if l, err := converter.CodeConvertFunc(b, out); err == nil && l > 0 {
-			//k.Write([]byte("wanghaijun"))
-			k.Write([]byte(out))
-		}
+	logging.Debug("broadcast:%s", string(b))
+	for k, _ := range monitorMap {
+		k.Write(b)
 	}
 }
 func LogServer(w http.ResponseWriter, req *http.Request) {
@@ -46,7 +44,8 @@ func LogServer(w http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		logging.Debug("log err:%s", err.Error())
 	}
-	logging.Debug("%s,%s,%s", req.RemoteAddr, req.URL.String(), text)
+	//logging.Debug("%s,%s,%s", req.RemoteAddr, req.URL.String(), text)
+	Broadcask([]byte(req.RemoteAddr + req.URL.String() + string(text)))
 }
 
 func main() {
@@ -61,6 +60,7 @@ func main() {
 		fmt.Println(err)
 		return
 	}
+	monitorMap = make(map[*websocket.Conn]*websocket.Conn)
 	logger, err := logging.NewTimeRotationHandler(config.GetConfigStr("logfilename"), "060102-15")
 	if err != nil {
 		fmt.Println(err)
