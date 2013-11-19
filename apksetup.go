@@ -5,8 +5,8 @@ import (
 	"code.google.com/p/go.net/websocket"
 	"flag"
 	"fmt"
-	iconv "github.com/hwch/iconv"
 	"github.com/navy1125/config"
+	iconv "github.com/navy1125/iconv"
 	"io"
 	"log"
 	"net/http"
@@ -73,10 +73,10 @@ func SetupServer(ws *websocket.Conn) {
 	}
 }
 func Broadcask(b []byte) {
-	for k, _ := range setupMap {
-		//k.Write(b)
-		out := make([]byte, len(b)*2)
-		if l, err := converter.CodeConvertFunc(b, out); err == nil && l > 0 {
+	out := make([]byte, len(b)*4)
+	if l, err := converter.CodeConvertFunc(b, out); err == nil && l > 0 {
+		for k, _ := range setupMap {
+			//k.Write(b)
 			//k.Write([]byte("wanghaijun"))
 			k.Write([]byte(out))
 		}
@@ -103,10 +103,20 @@ func execBat(bat string, ws *websocket.Conn) {
 	cmd.Wait()
 }
 func downloadWinFunc(w http.ResponseWriter, r *http.Request) {
-	http.Redirect(w, r, config.GetConfigStr("download_win"), 303)
+	if len(setupMap) != 0 {
+		w.Write([]byte("有人正在做版本,请稍后再试"))
+		defer r.Body.Close()
+	} else {
+		http.Redirect(w, r, config.GetConfigStr("download_win"), 303)
+	}
 }
 func downloadApkFunc(w http.ResponseWriter, r *http.Request) {
-	http.Redirect(w, r, config.GetConfigStr("download_apk"), 303)
+	if len(setupMap) != 0 {
+		w.Write([]byte("有人正在做版本,请稍后再试"))
+		defer r.Body.Close()
+	} else {
+		http.Redirect(w, r, config.GetConfigStr("download_apk"), 303)
+	}
 }
 func outputFunc(r io.ReadCloser, w io.Writer) {
 	b := bytes.NewBuffer(make([]byte, 1024))
@@ -142,7 +152,7 @@ func main() {
 		return
 	}
 	var err error
-	converter, err = iconv.NewCoder(iconv.GBK2312_UTF8_IDX)
+	converter, err = iconv.NewCoder(iconv.GBK18030_UTF8_IDX)
 	if err != nil {
 		fmt.Println("iconv err:", err)
 		return

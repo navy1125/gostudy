@@ -1,6 +1,6 @@
 $(document).ready(function() {
     var s = $('#screen');
-
+    connected = true;
     logMessage("connect to server..");
     createScreen(s);
 
@@ -27,6 +27,7 @@ function logMessage(m) {
 }
 
 var connection;
+var connected;
 
 function createScreen(s) {
     connection = new WebSocket(document.URL.replace("http://","ws://") + 'ws');
@@ -38,6 +39,7 @@ function createScreen(s) {
 }
 
 function wsOpen() {
+    connected = true;
     logMessage('Connection opened');
 }
 
@@ -47,7 +49,13 @@ function wsError(error) {
 
 function wsLogger(msg) {
     var s = $('#screen');
-    return function () { logMessage(msg); createScreen(s);}
+    return function () {
+        logMessage(msg);
+        if (connected) {
+            connected = false;
+            createScreen(s);
+        }
+    }
     
 }
 

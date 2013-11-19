@@ -28,11 +28,12 @@ func main() {
 	//*/
 
 	tsec := time.Now().Unix()
-	para := "qid=1234" + "&time=" + strconv.Itoa(int(tsec)) + "&server_id=100"
+	para := "qid=1234" + "&time=" + strconv.Itoa(int(tsec)) + "&server_id=10351"
 	hash := md5.New()
 	io.WriteString(hash, para+"344a5ec3dacac264f8603db0f24c9f49")
-	para = fmt.Sprintf("%s&sign=%x", para, hash.Sum(nil))
-	resp, err := http.Get("http://192.168.85.71:8000/bw/kw?" + para)
+	para = "http://120.132.152.40:8000/zssj/juxian/auth?" + fmt.Sprintf("%s&sign=%x", para, hash.Sum(nil))
+	fmt.Println(para)
+	resp, err := http.Get(para)
 	if err != nil {
 		log.Fatal("http.Get Err:", err)
 	}
