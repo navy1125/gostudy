@@ -41,6 +41,15 @@ func OnlineServer(w http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		logging.Error("select err:%s", err.Error())
 	}
+	if len(rows) == 0 {
+		min = int((now.Unix()+int64(offset))/60) - 2
+		query_string = "select * from ONLINENUM_TODAY where timestamp_min = " + strconv.Itoa(min)
+		rows, res, err = db_monitor.Query(query_string)
+		if err != nil {
+			logging.Error("select err:%s", err.Error())
+		}
+
+	}
 	var out_string string
 	for _, row := range rows {
 		zoneid := res.Map("zone_id")
@@ -51,9 +60,55 @@ func OnlineServer(w http.ResponseWriter, req *http.Request) {
 		out_string += strconv.Itoa(int(int16(id))) + "\\" + strconv.Itoa(num) + ";"
 	}
 	io.WriteString(w, out_string+"\n")
-	logging.Debug("quest online num:%s,%s", req.RemoteAddr, req.URL.Path)
+	logging.Debug("quest online num:%s,%s,%d,%s", req.RemoteAddr, req.URL.Path, min, out_string)
 }
+func OnlineCountryServer(w http.ResponseWriter, req *http.Request) {
+	rows, res, err := db.Query("SELECT zone FROM zoneInfo")
+	if err != nil {
+		logging.Error("select err:%s", err.Error())
+		return
+	}
+	zones := make(map[int]int)
+	for _, row := range rows {
+		zoneid := res.Map("zone")
+		id := row.Int(zoneid)
+		zones[(id<<16)+3] = 0
+		zones[(id<<16)+4] = 0
+		zones[(id<<16)+5] = 0
+		zones[(id<<16)+6] = 0
+	}
+	now := time.Now()
+	_, offset := now.Zone()
+	min := int((now.Unix()+int64(offset))/60) - 1
+	query_string := "select * from COUNTRYONLINENUM_TODAY where timestamp_min = " + strconv.Itoa(min)
+	rows, res, err = db_monitor.Query(query_string)
+	if err != nil {
+		logging.Error("select err:%s", err.Error())
+	}
+	if len(rows) == 0 {
+		min = int((now.Unix()+int64(offset))/60) - 2
+		query_string = "select * from COUNTRYONLINENUM_TODAY where timestamp_min = " + strconv.Itoa(min)
+		rows, res, err = db_monitor.Query(query_string)
+		if err != nil {
+			logging.Error("select err:%s", err.Error())
+		}
 
+	}
+	var out_string string
+	for _, row := range rows {
+		zoneid := res.Map("ZONEID")
+		country := res.Map("COUNTRY")
+		onlinenum := res.Map("ONLINENUM")
+		zones[int(((row.Int(zoneid)&0X0000FFFF)<<16)+row.Int(country))] = row.Int(onlinenum)
+	}
+	for id, num := range zones {
+		if num > 0 {
+			out_string += strconv.Itoa(int(id>>16)) + "\\" + strconv.Itoa(int(int16(id))) + "\\" + strconv.Itoa(num) + ";"
+		}
+	}
+	io.WriteString(w, out_string+"\n")
+	logging.Debug("quest online num:%s,%s,%d,%s", req.RemoteAddr, req.URL.Path, min, out_string)
+}
 func main() {
 	flag.Parse()
 	config.SetConfig("config", *flag.String("config", "config.xml", "config xml file for start"))
@@ -78,6 +133,7 @@ func main() {
 		logging.Error("mysql config syntax err:%s", mysqlurl)
 		return
 	}
+	logging.Info("server starting...")
 	mysqlurl = strings.Replace(mysqlurl, "mysql://", "", 1)
 	mysqlurl = strings.Replace(mysqlurl, "@", ":", 1)
 	mysqlurl = strings.Replace(mysqlurl, "/", ":", 1)
@@ -104,8 +160,10 @@ func main() {
 		return
 	}
 	http.HandleFunc("/online", OnlineServer)
+	http.HandleFunc("/online/country", OnlineCountryServer)
 	err = http.ListenAndServe(":"+config.GetConfigStr("port"), nil)
 	if err != nil {
 		logging.Error("ListenAndServe:%s", err.Error())
 	}
+	logging.Info("server stop...")
 }
