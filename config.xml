@@ -6,11 +6,39 @@
 		<ifname>eth1</ifname>
 	</global>
 	<ApkServer>
-		<ip>192.168.85.129</ip>
+		<ip>192.168.85.71</ip>
 		<port>18080</port>
 		<loginServerList>loginServerList.xml</loginServerList>
-		<download>proj.android\bin\hxsg-debug.apk</download>
-		<download>js/apksetup.js</download>
-		<bat>test.bat</bat>
+		<download_apk_fxsj>/home/whj/gostudy/js/</download_apk_fxsj>
+		<download_apk_fxsj_file>apksetup.js</download_apk_fxsj_file>
+		<download_win_fxsj>/home/whj/gostudy/js/</download_win_fxsj>
+		<download_win_fxsj_file>apksetup.js</download_win_fxsj_file>
+		<bat_apk_fxsj>test.bat</bat_apk_fxsj>
+		<bat_win_fxsj>test.bat</bat_win_fxsj>
+		<mobile_game_fxsj>fxsj</mobile_game_fxsj>
+		<mobile_game_fxsj_name>飞行射击</mobile_game_fxsj_name>
+		<download_apk_hxsg>proj.android\bin\hxsg-debug.apk</download_apk_hxsg>
+		<download_win_hxsg>js/apksetup.js</download_win_hxsg>
+		<bat_apk_hxsg>test.bat</bat_apk_hxsg>
+		<bat_win_hxsg>test.bat</bat_win_hxsg>
+		<mobile_game_hxsg>hxsg</mobile_game_hxsg>
+		<mobile_game_hxsg_name>幻想三国</mobile_game_hxsg_name>
+		<download_apk_sbjs>proj.android\bin\hxsg-debug.apk</download_apk_sbjs>
+		<download_win_sbjs>js/apksetup.js</download_win_sbjs>
+		<bat_apk_sbjs>test.bat</bat_apk_sbjs>
+		<bat_win_sbjs>test.bat</bat_win_sbjs>
+		<mobile_game_sbjs>sbjs</mobile_game_sbjs>
+		<mobile_game_sbjs_name>竖版僵尸</mobile_game_sbjs_name>
+		<download_apk_ffsx>proj.android\bin\hxsg-debug.apk</download_apk_ffsx>
+		<download_win_ffsx>js/apksetup.js</download_win_ffsx>
+		<bat_apk_ffsx>test.bat</bat_apk_ffsx>
+		<bat_win_ffsx>test.bat</bat_win_ffsx>
+		<mobile_game_ffsx>ffsx</mobile_game_ffsx>
+		<mobile_game_ffsx_name>付费三消</mobile_game_ffsx_name>
 	</ApkServer>
+	<MobileLogServer>
+		<ip>192.168.85.71</ip>
+		<port>18180</port>
+		<loginServerList>loginServerList.xml</loginServerList>
+	</MobileLogServer>
 </Zebra>

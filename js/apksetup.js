@@ -30,7 +30,8 @@ var connection;
 var connected;
 
 function createScreen(s) {
-    connection = new WebSocket(document.URL.replace("http://","ws://") + 'ws');
+    logMessage(document.URL.replace("http://","ws://") + '/ws');
+    connection = new WebSocket(document.URL.replace("http://","ws://") + '/ws');
 
     connection.onerror = wsError;
     connection.onopen = wsOpen;
@@ -80,15 +81,15 @@ function wsHandler(e) {
     //$('#blob').css('margin-top', d.Y);
 }
 
-function getApk() {
-    location.href = "/download_apk"
+function getApk(urlname) {
+    location.href = "/" + urlname + "/download_apk"
 }
-function getWin() {
-    location.href = "/download_win"
+function getWin(urlname) {
+    location.href = "/" + urlname + "/download_win"
 }
-function resetApk() {
-    if (connection) { connection.send('setup apk'); }
+function resetApk(urlname) {
+    if (connection) { connection.send('setup apk ' + urlname); }
 }
-function resetWin() {
-    if (connection) { connection.send('setup win'); }
+function resetWin(urlname) {
+    if (connection) { connection.send('setup win ' + urlname); }
 }

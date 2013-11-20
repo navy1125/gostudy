@@ -6,18 +6,27 @@ import (
 	"flag"
 	"fmt"
 	"github.com/navy1125/config"
-	iconv "github.com/navy1125/iconv"
+	//iconv "github.com/navy1125/iconv"
+	"html/template"
 	"io"
 	"log"
 	"net/http"
+	"os"
 	"os/exec"
+	"strings"
 	"sync"
 )
 
+type GameTempateData struct {
+	Name    string
+	UrlName string
+}
+
 var (
-	logNutex  sync.Mutex
-	setupMap  map[*websocket.Conn]*websocket.Conn
-	converter *iconv.Converter
+	logNutex sync.Mutex
+	setupMap map[*websocket.Conn]*websocket.Conn
+	gtdMap   map[string]GameTempateData
+	//converter *iconv.Converter
 	//utf8
 )
 
@@ -32,7 +41,8 @@ func SetupServer(ws *websocket.Conn) {
 			log.Print("Receive error - stopping worker: ", err)
 			break
 		}
-		if message == "setup apk" {
+		fmt.Println(message)
+		if strings.Contains(message, "setup apk") {
 			ws.Write([]byte("start setup apk now..."))
 			if len(setupMap) == 0 {
 				setupMap[ws] = ws
@@ -48,7 +58,7 @@ func SetupServer(ws *websocket.Conn) {
 				setupMap[ws] = ws
 			}
 		}
-		if message == "setup win" {
+		if strings.Contains(message, "setup win") {
 			ws.Write([]byte("start setup win now..."))
 			if len(setupMap) == 0 {
 				setupMap[ws] = ws
@@ -73,14 +83,15 @@ func SetupServer(ws *websocket.Conn) {
 	}
 }
 func Broadcask(b []byte) {
-	out := make([]byte, len(b)*4)
-	if l, err := converter.CodeConvertFunc(b, out); err == nil && l > 0 {
-		for k, _ := range setupMap {
-			//k.Write(b)
-			//k.Write([]byte("wanghaijun"))
-			k.Write([]byte(out))
-		}
-	}
+	/*
+		out := make([]byte, len(b)*4)
+		if l, err := converter.CodeConvertFunc(b, out); err == nil && l > 0 {
+			for k, _ := range setupMap {
+				//k.Write(b)
+				//k.Write([]byte("wanghaijun"))
+				k.Write([]byte(out))
+			}
+		}*/
 }
 func execBat(bat string, ws *websocket.Conn) {
 	cmd := exec.Command(bat)
@@ -103,21 +114,40 @@ func execBat(bat string, ws *websocket.Conn) {
 	cmd.Wait()
 }
 func downloadWinFunc(w http.ResponseWriter, r *http.Request) {
+	fmt.Println(r.URL.String())
+	gameurl := strings.Split(r.URL.String(), "/")[1]
 	if len(setupMap) != 0 {
 		w.Write([]byte("有人正在做版本,请稍后再试"))
 		defer r.Body.Close()
 	} else {
-		http.Redirect(w, r, config.GetConfigStr("download_win"), 303)
+		http.Redirect(w, r, strings.Replace(r.URL.String(), "download_win", "win", 1)+"/"+config.GetConfigStr("download_win"+"_"+gameurl+"_file"), 303)
 	}
 }
 func downloadApkFunc(w http.ResponseWriter, r *http.Request) {
+	fmt.Println(r.URL.String())
+	gameurl := strings.Split(r.URL.String(), "/")[1]
 	if len(setupMap) != 0 {
 		w.Write([]byte("有人正在做版本,请稍后再试"))
 		defer r.Body.Close()
 	} else {
-		http.Redirect(w, r, config.GetConfigStr("download_apk"), 303)
+		http.Redirect(w, r, strings.Replace(r.URL.String(), "download_apk", "apk", 1)+"/"+config.GetConfigStr("download_apk"+"_"+gameurl+"_file"), 303)
 	}
 }
+func mobileGameFunc(w http.ResponseWriter, r *http.Request) {
+	fmt.Println(r.URL.String())
+	pwd, _ := os.Getwd()
+	tmpl, err := template.ParseFiles(pwd + "/templates/index.html")
+	if err != nil {
+		fmt.Println("open game page error:%s", err.Error())
+		return
+	}
+	err = tmpl.Execute(w, gtdMap[strings.Replace(r.URL.String(), "/", "", 1)])
+	if err != nil {
+		fmt.Println("excute game page error:%s", err.Error())
+		return
+	}
+}
+
 func outputFunc(r io.ReadCloser, w io.Writer) {
 	b := bytes.NewBuffer(make([]byte, 1024))
 	for {
@@ -139,6 +169,7 @@ func outputFunc(r io.ReadCloser, w io.Writer) {
 	}
 }
 func main() {
+	fmt.Println("server starting...")
 	flag.Parse()
 	config.SetConfig("config", *flag.String("config", "config.xml", "config xml file for start"))
 	config.SetConfig("logfilename", *flag.String("logfilename", "/log/logfilename.log", "log file name"))
@@ -152,19 +183,43 @@ func main() {
 		return
 	}
 	var err error
-	converter, err = iconv.NewCoder(iconv.GBK18030_UTF8_IDX)
-	if err != nil {
-		fmt.Println("iconv err:", err)
-		return
-	}
+	/*
+		converter, err = iconv.NewCoder(iconv.GBK18030_UTF8_IDX)
+		if err != nil {
+			fmt.Println("iconv err:", err)
+			return
+		}*/
 	setupMap = make(map[*websocket.Conn]*websocket.Conn)
-	http.Handle("/ws", websocket.Handler(SetupServer))
-	http.Handle("/", http.FileServer(http.Dir(".")))
-	http.HandleFunc("/download_win", downloadWinFunc)
-	http.HandleFunc("/download_apk", downloadApkFunc)
+	gtdMap = make(map[string]GameTempateData)
+
+	http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("./js/"))))
+	//http.Handle("/", http.FileServer(http.Dir(".")))
+	InitGames()
 	//err := http.ListenAndServe("180.168.197.87:18080", nil)
 	err = http.ListenAndServe(config.GetConfigStr("ip")+":"+config.GetConfigStr("port"), nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
+	}
+	fmt.Println("server stop...")
+}
+func InitGames() {
+	cfg := config.GetConfig()
+	for k, _ := range *(*map[string]string)(cfg) {
+		if strings.Contains(k, "mobile_game_") {
+			url := strings.Split(k, "_")
+			if len(url) == 3 {
+				http.Handle("/"+url[2]+"/ws", websocket.Handler(SetupServer))
+				http.HandleFunc("/"+url[2], mobileGameFunc)
+				http.HandleFunc("/"+url[2]+"/download_win", downloadWinFunc)
+				http.HandleFunc("/"+url[2]+"/download_apk", downloadApkFunc)
+				http.Handle("/"+url[2]+"/apk/", http.StripPrefix("/"+url[2]+"/apk/", http.FileServer(http.Dir(config.GetConfigStr("download_apk"+"_"+url[2])))))
+				http.Handle("/"+url[2]+"/win/", http.StripPrefix("/"+url[2]+"/win/", http.FileServer(http.Dir(config.GetConfigStr("download_win"+"_"+url[2])))))
+				fmt.Println("/"+url[2]+"/win", config.GetConfigStr("download_win"+"_"+url[2]))
+				gamedata := GameTempateData{Name: config.GetConfigStr(k + "_name"), UrlName: url[2]}
+				gtdMap[url[2]] = gamedata
+			}
+			//http.Handle("/"+url[2], http.StripPrefix("/"+url[2], http.FileServer(http.Dir(v))))
+
+		}
 	}
 }
