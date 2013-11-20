@@ -24,7 +24,8 @@ type GameTempateData struct {
 
 var (
 	logNutex sync.Mutex
-	setupMap map[*websocket.Conn]*websocket.Conn
+	socketMap map[*websocket.Conn]string
+	gamesMap map[string]int
 	gtdMap   map[string]GameTempateData
 	//converter *iconv.Converter
 	//utf8
@@ -37,41 +38,58 @@ func SetupServer(ws *websocket.Conn) {
 	for {
 		err := websocket.Message.Receive(ws, &message)
 		if err != nil {
-			delete(setupMap, ws)
+			if v,ok := socketMap[ws] ; ok {
+				gamesMap[v] --
+			}
+			delete(socketMap, ws)
 			log.Print("Receive error - stopping worker: ", err)
 			break
 		}
 		fmt.Println(message)
 		if strings.Contains(message, "setup apk") {
-			ws.Write([]byte("start setup apk now..."))
-			if len(setupMap) == 0 {
-				setupMap[ws] = ws
-				//execBat("publish_android.bat", ws)
-				//execBat("copy_apk.bat", ws)
-				execBat(config.GetConfigStr("bat_apk"), ws)
-				for k, _ := range setupMap {
-					k.Write([]byte("setup finish apk"))
-					k.Close()
-					delete(setupMap, k)
+			gamestr := strings.Split(message," ")
+			if len(gamestr) == 3{
+				game := gamestr[2]
+				ws.Write([]byte("start setup apk now..."))
+				if len(socketMap) == 0 {
+					if _,ok := gamesMap[game] ; ok {
+						gamesMap[game] ++
+						socketMap[ws] = game
+						//execBat("publish_android.bat", ws)
+						//execBat("copy_apk.bat", ws)
+						execBat(config.GetConfigStr("bat_apk"), ws)
+						for k, _ := range socketMap {
+							k.Write([]byte("setup finish apk"))
+							k.Close()
+							delete(socketMap, k)
+						}
+					} else {
+						socketMap[ws] = game
+					}
 				}
-			} else {
-				setupMap[ws] = ws
 			}
 		}
 		if strings.Contains(message, "setup win") {
 			ws.Write([]byte("start setup win now..."))
-			if len(setupMap) == 0 {
-				setupMap[ws] = ws
-				//execBat("publish_android.bat", ws)
-				//execBat("copy_apk.bat", ws)
-				execBat(config.GetConfigStr("bat_win"), ws)
-				for k, _ := range setupMap {
-					k.Write([]byte("setup finish win"))
-					k.Close()
-					delete(setupMap, k)
+			gamestr := strings.Split(message," ")
+			if len(gamestr) == 3{
+				game := gamestr[2]
+				if len(socketMap) == 0 {
+					if _,ok := gamesMap[game] ; ok {
+						gamesMap[game] --
+						socketMap[ws] = game
+						//execBat("publish_android.bat", ws)
+						//execBat("copy_apk.bat", ws)
+						execBat(config.GetConfigStr("bat_win"), ws)
+						for k, _ := range socketMap {
+							k.Write([]byte("setup finish win"))
+							k.Close()
+							delete(socketMap, k)
+						}
+					} else {
+						socketMap[ws] = game
+					}
 				}
-			} else {
-				setupMap[ws] = ws
 			}
 		}
 
@@ -82,14 +100,20 @@ func SetupServer(ws *websocket.Conn) {
 		//}
 	}
 }
-func Broadcask(b []byte) {
+func Broadcask(b []byte,ws *websocket.Conn) {
+	_ ,ok:= socketMap[ws]
+	if !ok{
+		return
+	}
 	/*
 		out := make([]byte, len(b)*4)
 		if l, err := converter.CodeConvertFunc(b, out); err == nil && l > 0 {
-			for k, _ := range setupMap {
-				//k.Write(b)
-				//k.Write([]byte("wanghaijun"))
-				k.Write([]byte(out))
+			for k, v := range socketMap {
+				if v == game{
+					//k.Write(b)
+					//k.Write([]byte("wanghaijun"))
+					k.Write([]byte(out))
+				}
 			}
 		}*/
 }
@@ -97,16 +121,16 @@ func execBat(bat string, ws *websocket.Conn) {
 	cmd := exec.Command(bat)
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
-		Broadcask([]byte(err.Error()))
+		Broadcask([]byte(err.Error()),ws)
 		fmt.Print(string([]byte(err.Error())))
 	}
 	stdin, err := cmd.StderrPipe()
 	if err != nil {
-		Broadcask([]byte(err.Error()))
+		Broadcask([]byte(err.Error()),ws)
 		fmt.Print(string([]byte(err.Error())))
 	}
 	if err := cmd.Start(); err != nil {
-		Broadcask([]byte(err.Error()))
+		Broadcask([]byte(err.Error()),ws)
 		fmt.Print(string([]byte(err.Error())))
 	}
 	go outputFunc(stdout, ws)
@@ -116,7 +140,12 @@ func execBat(bat string, ws *websocket.Conn) {
 func downloadWinFunc(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(r.URL.String())
 	gameurl := strings.Split(r.URL.String(), "/")[1]
-	if len(setupMap) != 0 {
+	if _,ok := gamesMap[gameurl] ; !ok {
+		w.Write([]byte("不可识别的游戏"))
+		defer r.Body.Close()
+		return
+	}
+	if len(socketMap) != 0 {
 		w.Write([]byte("有人正在做版本,请稍后再试"))
 		defer r.Body.Close()
 	} else {
@@ -126,7 +155,12 @@ func downloadWinFunc(w http.ResponseWriter, r *http.Request) {
 func downloadApkFunc(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(r.URL.String())
 	gameurl := strings.Split(r.URL.String(), "/")[1]
-	if len(setupMap) != 0 {
+	if _,ok := gamesMap[gameurl] ; !ok {
+		w.Write([]byte("不可识别的游戏"))
+		defer r.Body.Close()
+		return
+	}
+	if len(socketMap) != 0 {
 		w.Write([]byte("有人正在做版本,请稍后再试"))
 		defer r.Body.Close()
 	} else {
@@ -148,13 +182,13 @@ func mobileGameFunc(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func outputFunc(r io.ReadCloser, w io.Writer) {
+func outputFunc(r io.ReadCloser, ws *websocket.Conn) {
 	b := bytes.NewBuffer(make([]byte, 1024))
 	for {
 		n, err := r.Read(b.Bytes())
 		if n > 0 {
 			logNutex.Lock()
-			Broadcask(b.Bytes()[0:n])
+			Broadcask(b.Bytes()[0:n],ws)
 			fmt.Print(string(b.Bytes()[0:n]))
 			logNutex.Unlock()
 		}
@@ -162,7 +196,7 @@ func outputFunc(r io.ReadCloser, w io.Writer) {
 			break
 		}
 		if err != nil {
-			Broadcask([]byte(err.Error()))
+			Broadcask([]byte(err.Error()),ws)
 			fmt.Print(string([]byte(err.Error())))
 			break
 		}
@@ -189,7 +223,8 @@ func main() {
 			fmt.Println("iconv err:", err)
 			return
 		}*/
-	setupMap = make(map[*websocket.Conn]*websocket.Conn)
+	socketMap = make(map[*websocket.Conn]string)
+	gamesMap = make(map[string]int)
 	gtdMap = make(map[string]GameTempateData)
 
 	http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("./js/"))))
@@ -208,6 +243,7 @@ func InitGames() {
 		if strings.Contains(k, "mobile_game_") {
 			url := strings.Split(k, "_")
 			if len(url) == 3 {
+				gamesMap[url[2]] = 0
 				http.Handle("/"+url[2]+"/ws", websocket.Handler(SetupServer))
 				http.HandleFunc("/"+url[2], mobileGameFunc)
 				http.HandleFunc("/"+url[2]+"/download_win", downloadWinFunc)
