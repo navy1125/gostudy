@@ -33,7 +33,38 @@ func main() {
 	io.WriteString(hash, para+"344a5ec3dacac264f8603db0f24c9f49")
 	para = "http://120.132.152.40:8000/zssj/juxian/auth?" + fmt.Sprintf("%s&sign=%x", para, hash.Sum(nil))
 	fmt.Println(para)
-	resp, err := http.Get(para)
+	hash.Reset()
+	parabill := "qid=1234" + "&order_amount=100" + "&order_id=1000" + "&server_id=10351"
+	io.WriteString(hash, "1234100100010351"+"344a5ec3dacac264f8603db0f24c9f49")
+	parabill = "http://120.132.152.40:8000/zssj/juxian/bill?" + fmt.Sprintf("%s&sign=%x", parabill, hash.Sum(nil))
+	fmt.Println(parabill)
+	hash.Reset()
+	paracheck := "qid=1234" + "&server_id=10351"
+	io.WriteString(hash, paracheck+"344a5ec3dacac264f8603db0f24c9f49")
+	paracheck = "http://192.168.85.71:8000/zssj/juxian/check?" + fmt.Sprintf("%s&sign=%x", paracheck, hash.Sum(nil))
+	fmt.Println(paracheck)
+	hash.Reset()
+	parakw := "from_id=kw" + "&game_id=3055" + "&login_name=1234" + "&server_id=10351" + "&time=" + strconv.Itoa(int(tsec))
+	io.WriteString(hash, parakw+"&key="+"344a5ec3dacac264f8603db0f24c9f49")
+	parakw = "http://192.168.85.71:8000/zssj/kw/auth?" + fmt.Sprintf("%s&token=%x", parakw, hash.Sum(nil))
+	fmt.Println(parakw)
+	hash.Reset()
+	parakwbill := "from_id=kw" + "&game_id=3055" + "&login_name=1234" + "&money=1" + "&order_no=1111" + "&server_id=10351"
+	io.WriteString(hash, "kw305512341111110351344a5ec3dacac264f8603db0f24c9f49")
+	parakwbill = "http://192.168.85.71:8000/zssj/kw/bill?" + fmt.Sprintf("%s&token=%x", parakwbill, hash.Sum(nil))
+	fmt.Println(parakwbill)
+	hash.Reset()
+	parakwcheck := "from_id=kw" + "&game_id=3055" + "&login_name=1234" + "&server_id=10351"
+	io.WriteString(hash, "kw3055123410351344a5ec3dacac264f8603db0f24c9f49")
+	parakwcheck = "http://192.168.85.71:8000/zssj/kw/check?" + fmt.Sprintf("%s&token=%x", parakwcheck, hash.Sum(nil))
+	fmt.Println(parakwcheck)
+
+	hash.Reset()
+	para619 := "from_id=kw" + "&game_id=3055" + "&login_name=1234" + "&server_id=10351" + "&time=" + strconv.Itoa(int(tsec))
+	io.WriteString(hash, para619+"&key="+"344a5ec3dacac264f8603db0f24c9f49")
+	para619 = "http://192.168.85.71:8000/zssj/kw/auth?" + fmt.Sprintf("%s&token=%x", para619, hash.Sum(nil))
+	fmt.Println(para619)
+	resp, err := http.Get(paracheck)
 	if err != nil {
 		log.Fatal("http.Get Err:", err)
 	}

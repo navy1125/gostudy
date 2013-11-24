@@ -61,18 +61,18 @@ function wsLogger(msg) {
 }
 
 function wsHandler(e) {
-    if (e.data == "setup finish apk") {
+    if (e.data.match("setup finish apk")   == "setup finish apk") {
         document.getElementById("log").innerHTML = ""
         logMessage(e.data);
         logMessage("downloading");
-        location.href = "/download_apk"
+		getApk(e.data.replace(/setup finish apk / ,""))
         return
     }
-    if (e.data == "setup finish win") {
+    if (e.data.match("setup finish win")  == "setup finish win") {
         document.getElementById("log").innerHTML = ""
         logMessage(e.data);
         logMessage("downloading");
-        location.href = "/download_win"
+		getWin(e.data.replace(/setup finish win / ,""))
         return
     }
     logMessage(e.data);
