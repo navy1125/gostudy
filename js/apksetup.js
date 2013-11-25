@@ -5,19 +5,22 @@ $(document).ready(function() {
     createScreen(s);
 
     $(document).keydown(function(e) {
-        if(e.which == 37) {
-            if(connection) { connection.send('l'); }
+    	var msg = '{"Id":"keyboard","Data"=""}';
+
+    	jmsg = $.parseJSON(msg)
+		if (e.which == 37) {
+			jmsg.Data='l';
         }
         if(e.which == 39) {
-            if(connection) { connection.send('r'); }   
+        	jmsg.Data = 'r';
         }
         if(e.which == 38) {
-            if(connection) { connection.send('u'); }   
+        	jmsg.Data = 'u';
         }
         if(e.which == 40) {
-            if(connection) { connection.send('d'); }   
+        	jmsg.Data = 'd';
         }
-
+        if (connection) { connection.send(JSON.stringify(jmsg)); }
     });
 });
 
@@ -61,22 +64,24 @@ function wsLogger(msg) {
 }
 
 function wsHandler(e) {
-    if (e.data.match("setup finish apk")   == "setup finish apk") {
+	d = $.parseJSON(e.data);
+	if (d.Id == "setup finish apk") {
         document.getElementById("log").innerHTML = ""
-        logMessage(e.data);
+        logMessage(d.Data);
         logMessage("downloading");
-		getApk(e.data.replace(/setup finish apk / ,""))
+		getApk(d.Data)
         return
     }
-    if (e.data.match("setup finish win")  == "setup finish win") {
+	//if (e.data.match("setup finish win")  == "setup finish win") {
+	if (d.Id  == "setup finish win") {
         document.getElementById("log").innerHTML = ""
-        logMessage(e.data);
+        logMessage(d.Data);
         logMessage("downloading");
-		getWin(e.data.replace(/setup finish win / ,""))
+        getApk(d.Data)
+        //getWin(e.data.replace(/setup finish win / ,""))
         return
     }
-    logMessage(e.data);
-    //d = $.parseJSON(e.data);
+    logMessage(d.Data);
     //$('#blob').css('margin-left', d.X);
     //$('#blob').css('margin-top', d.Y);
 }
@@ -88,8 +93,10 @@ function getWin(urlname) {
     location.href = "/" + urlname + "/download_win"
 }
 function resetApk(urlname) {
-    if (connection) { connection.send('setup apk ' + urlname); }
+	var msg = '{"Id":"setup apk","Data":"'+ urlname + '"}';
+    if (connection) { connection.send(msg); }
 }
 function resetWin(urlname) {
-    if (connection) { connection.send('setup win ' + urlname); }
+	var msg = '{"Id":"setup win","Data":"' + urlname + '"}';
+	if (connection) { connection.send(msg); }
 }

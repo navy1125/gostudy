@@ -32,95 +32,93 @@ var (
 	//utf8
 )
 
+type JSONCommand struct {
+	Id   string `json:"Id,omitempty"`
+	Data string `json:"Data,omitempty"`
+}
+
 func SetupServer(ws *websocket.Conn) {
-	var message string
+	var message JSONCommand
 	//world := createWorld()
 
 	for {
-		err := websocket.Message.Receive(ws, &message)
+		err := websocket.JSON.Receive(ws, &message)
 		if err != nil {
 			if v, ok := socketMap[ws]; ok {
 				gamesMap[v]--
-				Broadcask([]byte("退出减少后当前用户数量:"+v+":"+strconv.Itoa(gamesMap[v])), ws)
+				Broadcask("0", []byte("退出减少后当前用户数量:"+v+":"+strconv.Itoa(gamesMap[v])), ws)
 			}
 			delete(socketMap, ws)
 			log.Print("Receive error - stopping worker: ", err)
 			break
 		}
-		fmt.Println(message)
-		if strings.Contains(message, "setup apk") {
-			gamestr := strings.Split(message, " ")
-			if len(gamestr) == 3 {
-				if _, ok := socketMap[ws]; !ok {
-					game := gamestr[2]
-					if v, ok := gamesMap[game]; ok {
-						gamesMap[game]++
-						socketMap[ws] = game
-						Broadcask([]byte("增加后当前用户数量:"+game+":"+strconv.Itoa(gamesMap[game])), ws)
-						if v == 0 {
-							ws.Write([]byte("start setup apk:" + game + " now..."))
-							//execBat("publish_android.bat", ws)
-							//execBat("copy_apk.bat", ws)
-							ws.Write([]byte(config.GetConfigStr("bat_apk_" + game)))
-							//execBat(config.GetConfigStr("bat_apk_"+game), ws)
-							Broadcask([]byte("setup finish apk "+game), ws)
-							for k, v2 := range socketMap {
-								if v2 == game {
-									gamesMap[v2]--
-									delete(socketMap, k)
-									Broadcask([]byte("完成减少后当前用户数量:"+v2+":"+strconv.Itoa(gamesMap[v2])), ws)
-								}
+		fmt.Println(message.Id, message.Data)
+		if strings.Contains(message.Id, "setup apk") {
+			game := message.Data
+			if _, ok := socketMap[ws]; !ok {
+				if v, ok := gamesMap[game]; ok {
+					gamesMap[game]++
+					socketMap[ws] = game
+					Broadcask("0", []byte("增加后当前用户数量:"+game+":"+strconv.Itoa(gamesMap[game])), ws)
+					if v == 0 {
+						SendMessage("0", []byte("start setup apk:"+game+" now..."), ws)
+						//execBat("publish_android.bat", ws)
+						//execBat("copy_apk.bat", ws)
+						SendMessage("0", []byte(config.GetConfigStr("bat_apk_"+game)), ws)
+						//execBat(config.GetConfigStr("bat_apk_"+game), ws)
+						Broadcask("setup finish apk", []byte(game), ws)
+						for k, v2 := range socketMap {
+							if v2 == game {
+								gamesMap[v2]--
+								delete(socketMap, k)
+								Broadcask("0", []byte("完成减少后当前用户数量:"+v2+":"+strconv.Itoa(gamesMap[v2])), ws)
 							}
-							for _, v2 := range socketMap {
-								if v2 == game {
-									//k.Close()
-								}
-							}
-						} else {
-							ws.Write([]byte("wait setup apk:" + game + " now..."))
 						}
+						for _, v2 := range socketMap {
+							if v2 == game {
+								//k.Close()
+							}
+						}
+					} else {
+						SendMessage("0", []byte("wait setup apk:"+game+" now..."), ws)
 					}
-				} else {
-					ws.Write([]byte("重复加入"))
 				}
+			} else {
+				SendMessage("0", []byte("重复加入"), ws)
 			}
 		}
-		if strings.Contains(message, "setup win") {
-			gamestr := strings.Split(message, " ")
-			if len(gamestr) == 3 {
-				if _, ok := socketMap[ws]; !ok {
-					game := gamestr[2]
-					if v, ok := gamesMap[game]; ok {
-						gamesMap[game]++
-						socketMap[ws] = game
-						Broadcask([]byte("增加后当前用户数量:"+game+":"+strconv.Itoa(gamesMap[game])), ws)
-						if v == 0 {
-							ws.Write([]byte("start setup win:" + game + " now..."))
-							//execBat("publish_android.bat", ws)
-							//execBat("copy_apk.bat", ws)
-							ws.Write([]byte(config.GetConfigStr("bat_apk_" + game)))
-							execBat(config.GetConfigStr("bat_win_"+game), ws)
-							Broadcask([]byte("setup finish win "+game), ws)
-							for k, v2 := range socketMap {
-								if v2 == game {
-									gamesMap[v2]--
-									delete(socketMap, k)
-									Broadcask([]byte("完成减少后当前用户数量:"+v2+":"+strconv.Itoa(gamesMap[v2])), ws)
-								}
+		if strings.Contains(message.Id, "setup win") {
+			game := message.Data
+			if _, ok := socketMap[ws]; !ok {
+				if v, ok := gamesMap[game]; ok {
+					gamesMap[game]++
+					socketMap[ws] = game
+					Broadcask("0", []byte("增加后当前用户数量:"+game+":"+strconv.Itoa(gamesMap[game])), ws)
+					if v == 0 {
+						SendMessage("0", []byte("start setup win:"+game+" now..."), ws)
+						//execBat("publish_android.bat", ws)
+						//execBat("copy_apk.bat", ws)
+						SendMessage("0", []byte(config.GetConfigStr("bat_apk_"+game)), ws)
+						execBat(config.GetConfigStr("bat_win_"+game), ws)
+						Broadcask("setup finish win", []byte(game), ws)
+						for k, v2 := range socketMap {
+							if v2 == game {
+								gamesMap[v2]--
+								delete(socketMap, k)
+								Broadcask("0", []byte("完成减少后当前用户数量:"+v2+":"+strconv.Itoa(gamesMap[v2])), ws)
 							}
-							for _, v2 := range socketMap {
-								if v2 == game {
-									//k.Close()
-								}
-							}
-						} else {
-							ws.Write([]byte("wait setup win:" + game + " now..."))
 						}
+						for _, v2 := range socketMap {
+							if v2 == game {
+								//k.Close()
+							}
+						}
+					} else {
+						SendMessage("0", []byte("wait setup win:"+game+" now..."), ws)
 					}
-				} else {
-					ws.Write([]byte("重复加入"))
 				}
-
+			} else {
+				SendMessage("0", []byte("重复加入"), ws)
 			}
 		}
 
@@ -131,43 +129,55 @@ func SetupServer(ws *websocket.Conn) {
 		//}
 	}
 }
-func Broadcask(b []byte, ws *websocket.Conn) {
+func SendMessage(id string, b []byte, ws *websocket.Conn) {
+	cmd := JSONCommand{Id: id}
+	out := make([]byte, len(b)*4)
+	if l, err := converter.CodeConvertFunc(b, out); err == nil && l > 0 {
+		cmd.Data = string(out)
+	} else {
+		cmd.Data = string(b)
+	}
+	SendJSON(&cmd, ws)
+}
+func Broadcask(id string, b []byte, ws *websocket.Conn) {
+	cmd := JSONCommand{Id: id}
+	out := make([]byte, len(b)*4)
+	if l, err := converter.CodeConvertFunc(b, out); err == nil && l > 0 {
+		cmd.Data = string(out)
+	} else {
+		cmd.Data = string(b)
+	}
+	BroadcaskJSON(&cmd, ws)
+}
+
+func BroadcaskJSON(msg *JSONCommand, ws *websocket.Conn) {
 	game, ok := socketMap[ws]
 	if !ok {
 		return
 	}
-	out := make([]byte, len(b)*4)
-	if l, err := converter.CodeConvertFunc(b, out); err == nil && l > 0 {
-		for k, v := range socketMap {
-			//k.Write([]byte(v + ":" + game))
-			if v == game {
-				//k.Write(b)
-				//k.Write([]byte("wanghaijun"))
-				k.Write([]byte(out))
-			}
-		}
-	} else {
-		for k, v := range socketMap {
-			if v == game {
-				k.Write(b)
-			}
+	for k, v := range socketMap {
+		if v == game {
+			SendJSON(msg, k)
 		}
 	}
+}
+func SendJSON(msg *JSONCommand, ws *websocket.Conn) {
+	websocket.JSON.Send(ws, msg)
 }
 func execBat(bat string, ws *websocket.Conn) {
 	cmd := exec.Command(bat)
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
-		Broadcask([]byte(err.Error()), ws)
+		Broadcask("1", []byte(err.Error()), ws)
 		fmt.Print(string([]byte(err.Error())))
 	}
 	stdin, err := cmd.StderrPipe()
 	if err != nil {
-		Broadcask([]byte(err.Error()), ws)
+		Broadcask("1", []byte(err.Error()), ws)
 		fmt.Print(string([]byte(err.Error())))
 	}
 	if err := cmd.Start(); err != nil {
-		Broadcask([]byte(err.Error()), ws)
+		Broadcask("1", []byte(err.Error()), ws)
 		fmt.Print(string([]byte(err.Error())))
 	}
 	go outputFunc(stdout, ws)
@@ -236,7 +246,7 @@ func outputFunc(r io.ReadCloser, ws *websocket.Conn) {
 		n, err := r.Read(b.Bytes())
 		if n > 0 {
 			logNutex.Lock()
-			Broadcask(b.Bytes()[0:n], ws)
+			Broadcask("0", b.Bytes()[0:n], ws)
 			fmt.Print(string(b.Bytes()[0:n]))
 			logNutex.Unlock()
 		}
@@ -244,7 +254,7 @@ func outputFunc(r io.ReadCloser, ws *websocket.Conn) {
 			break
 		}
 		if err != nil {
-			Broadcask([]byte(err.Error()), ws)
+			Broadcask("1", []byte(err.Error()), ws)
 			fmt.Print(string([]byte(err.Error())))
 			break
 		}
