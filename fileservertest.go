@@ -2,17 +2,18 @@ package main
 
 import (
 	"fmt"
-	"github.com/simonz05/godis/redis"
+	//"github.com/simonz05/godis/redis"
+	"io/ioutil"
 	"log"
 	"net/http"
 )
 
 var (
-	redis_handle *redis.Client
+//redis_handle *redis.Client
 )
 
 func main() {
-	redis_handle := redis.New("tcp:112.65.197.72:6379", 0, "")
+	//redis_handle := redis.New("tcp:112.65.197.72:6379", 0, "")
 	//log.Fatal(http.ListenAndServe(":8080", http.FileServer(http.Dir("D:\\work\\gostudy"))))
 	//http.Handle("/gostudy/", http.StripPrefix("/gostudy/", http.FileServer(http.Dir("D:\\work\\gostudy"))))
 	http.Handle("/", http.FileServer(http.Dir("e:\\tmp")))
@@ -23,6 +24,8 @@ func main() {
 	http.Handle("/test1/", sm1)
 	http.Handle("/test2/", sm2)
 	http.HandleFunc("/hijack", hf3)
+	http.HandleFunc("/game", game)
+	http.HandleFunc("/fxsj-zh", newUserCard)
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
@@ -60,4 +63,23 @@ func hf3(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Fprintf(bufrw, "You said: %q\nBye.\n", s)
 	bufrw.Flush()
+}
+
+func game(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("aaaaaaaaaaaaaaaaaaaaa")
+	//fmt.Println(r.FormValue("gamename"))
+	text, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(string(text))
+}
+
+func newUserCard(w http.ResponseWriter, r *http.Request) {
+	text, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(string(text))
+	w.Write([]byte(`{"id":"ok","data":""}`))
 }
