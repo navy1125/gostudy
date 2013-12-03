@@ -6,7 +6,7 @@
 		<ifname>eth1</ifname>
 	</global>
 	<ApkServer>
-		<ip>180.168.197.87</ip>
+		<ip>192.168.85.71</ip>
 		<port>28080</port>
 		<download_apk_fxsj>svn/trunk/cocos/cocos2d-x-2.1.4/projects/fxsj/proj.android/bin/</download_apk_fxsj>
 		<download_apk_fxsj_file>fxsj-debug.apk</download_apk_fxsj_file>
