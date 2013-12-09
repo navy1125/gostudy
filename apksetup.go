@@ -65,7 +65,7 @@ func SetupServer(ws *websocket.Conn) {
 						//execBat("publish_android.bat", ws)
 						//execBat("copy_apk.bat", ws)
 						SendMessage("0", []byte(config.GetConfigStr("bat_apk_"+game)), ws)
-						//execBat(config.GetConfigStr("bat_apk_"+game), ws)
+						execBat(config.GetConfigStr("bat_apk_"+game), ws)
 						Broadcask("setup finish apk", []byte(game), ws)
 						for k, v2 := range socketMap {
 							if v2 == game {
