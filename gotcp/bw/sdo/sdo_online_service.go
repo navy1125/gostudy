@@ -3,10 +3,10 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/GXTime/logging"
+	"git.code4.in/logging"
 	"github.com/navy1125/config"
 	mysql "github.com/ziutek/mymysql/autorc"
-	_ "github.com/ziutek/mymysql/native" // Native engine
+	_ "github.com/ziutek/mymysql/thrsafe" // You may also use the native engine
 	"io"
 	"net/http"
 	"regexp"

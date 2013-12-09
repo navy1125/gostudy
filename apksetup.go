@@ -167,20 +167,22 @@ func SendMessage(id string, b []byte, ws *websocket.Conn) {
 	cmd := JSONCommand{Id: id}
 	out := make([]byte, len(b)*4)
 	if l, err := converter.CodeConvertFunc(b, out); err == nil && l > 0 {
-		cmd.Data = string(out)
+		cmd.Data = string(out[0:l])
 	} else {
 		cmd.Data = string(b)
 	}
+	fmt.Println(cmd.Data, len(cmd.Data))
 	SendJSON(&cmd, ws)
 }
 func Broadcask(id string, b []byte, ws *websocket.Conn) {
 	cmd := JSONCommand{Id: id}
 	out := make([]byte, len(b)*4)
 	if l, err := converter.CodeConvertFunc(b, out); err == nil && l > 0 {
-		cmd.Data = string(out)
+		cmd.Data = string(out[0:l])
 	} else {
 		cmd.Data = string(b)
 	}
+	fmt.Println(cmd.Data, len(cmd.Data))
 	BroadcaskJSON(&cmd, ws)
 }
 

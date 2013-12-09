@@ -5,7 +5,6 @@ import (
 	"encoding/binary"
 	"fmt"
 	"net"
-	//"reflect"
 	"time"
 )
 
@@ -94,14 +93,21 @@ func (self *Task) SendCmd(ptr unsafe.Pointer, length int) {
 func (self *Task) SendCmd(v interface{}) {
 	buf := new(bytes.Buffer)
 	if err := binary.Write(buf, binary.LittleEndian, v); err != nil {
-		fmt.Println(err)
+		self.Error("SendCmd err:", err.Error())
 		return
 	}
-	fmt.Println(len(buf.Bytes()))
 	self.handleWriteFun(self, buf.Bytes())
 
 }
 
+func (self *Task) GetCmd(data []byte, v interface{}) error {
+	buf := bytes.NewBuffer(data)
+	if err := binary.Read(buf, binary.BigEndian, v); err != nil {
+		self.Error("GetCmd err:", err.Error())
+		return err
+	}
+	return nil
+}
 func (self *Task) Start() {
 	go self.startRead()
 	go self.startWrite()

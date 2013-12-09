@@ -13,7 +13,7 @@ import (
 func main() {
 	//log.Fatal(http.ListenAndServe(":8080", http.FileServer(http.Dir("D:\\work\\gostudy"))))
 	//http.Handle("/gostudy/", http.StripPrefix("/gostudy/", http.FileServer(http.Dir("D:\\work\\gostudy"))))
-	http.Handle("/", http.FileServer(http.Dir("/home/whj/gostudy")))
+	http.Handle("/bw/", http.StripPrefix("/bw/", http.FileServer(http.Dir("/home/whj/gogos/gameauth/game/bw"))))
 	http.HandleFunc("/post", postfunc)
 	http.HandleFunc("/upload", uploadfunc)
 	log.Fatal(http.ListenAndServe(":8080", nil))
