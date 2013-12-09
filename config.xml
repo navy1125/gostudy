@@ -14,6 +14,7 @@
 		<download_win_fxsj_file>fxsj-win.7z</download_win_fxsj_file>
 		<bat_apk_fxsj>svn\\trunk\\cocos\\cocos2d-x-2.1.4\\projects\\fxsj\\publish_android.bat</bat_apk_fxsj>
 		<bat_win_fxsj>svn\\trunk\\cocos\\cocos2d-x-2.1.4\\projects\\fxsj\\publish_windows.bat</bat_win_fxsj>
+		<bat_huodong_fxsj>svn\\trunk\\cocos\\cocos2d-x-2.1.4\\projects\\fxsj\\publish_huodong.bat</bat_huodong_fxsj>
 		<mobile_game_fxsj>fxsj</mobile_game_fxsj>
 		<mobile_game_fxsj_name>飞行射击</mobile_game_fxsj_name>
 		<download_apk_hxsg>svn/trunk/cocos/cocos2d-x-2.1.4/projects/hxsg/proj.android/bin/</download_apk_hxsg>
@@ -22,6 +23,7 @@
 		<download_win_hxsg_file>hxsg-win.7z</download_win_hxsg_file>
 		<bat_apk_hxsg>svn\\trunk\\cocos\\cocos2d-x-2.1.4\\projects\\hxsg\\publish_android.bat</bat_apk_hxsg>
 		<bat_win_hxsg>svn\\trunk\\cocos\\cocos2d-x-2.1.4\\projects\\hxsg\\publish_windows.bat</bat_win_hxsg>
+		<bat_huodong_hxsg>svn\\trunk\\cocos\\cocos2d-x-2.1.4\\projects\\hxsg\\publish_huodong.bat</bat_huodong_hxsg>
 		<mobile_game_hxsg>hxsg</mobile_game_hxsg>
 		<mobile_game_hxsg_name>幻想三国</mobile_game_hxsg_name>
 		<download_apk_sbjs>svn/trunk/cocos/cocos2d-x-2.1.4/projects/sbjs/proj.android/bin/</download_apk_sbjs>
@@ -30,6 +32,7 @@
 		<download_win_sbjs_file>sbjs-win.7z</download_win_sbjs_file>
 		<bat_apk_sbjs>svn\\trunk\\cocos\\cocos2d-x-2.1.4\\projects\\sbjs\\publish_android.bat</bat_apk_sbjs>
 		<bat_win_sbjs>svn\\trunk\\cocos\\cocos2d-x-2.1.4\\projects\\sbjs\\publish_windows.bat</bat_win_sbjs>
+		<bat_huodong_sbjs>svn\\trunk\\cocos\\cocos2d-x-2.1.4\\projects\\sbjs\\publish_huodong.bat</bat_huodong_sbjs>
 		<mobile_game_sbjs>sbjs</mobile_game_sbjs>
 		<mobile_game_sbjs_name>竖版僵尸</mobile_game_sbjs_name>
 		<download_apk_ffsx>proj.android\bin\hxsg-debug.apk</download_apk_ffsx>
@@ -38,6 +41,7 @@
 		<bat_win_ffsx>test.bat</bat_win_ffsx>
 		<mobile_game_ffsx>ffsx</mobile_game_ffsx>
 		<mobile_game_ffsx_name>付费三消</mobile_game_ffsx_name>
+		<bat_huodong_ffsx>svn\\trunk\\cocos\\cocos2d-x-2.1.4\\projects\\ffsx\\publish_huodong.bat</bat_huodong_ffsx>
 	</ApkServer>
 	<MobileLogServer>
 		<ip>192.168.85.71</ip>

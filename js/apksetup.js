@@ -29,6 +29,10 @@ function logMessage(m) {
     window.scrollTo(0, document.body.scrollHeight)
 }
 
+function errMessage(m) {
+	$('#err').append('<li>' + m + '</li>');
+	window.scrollTo(0, document.body.scrollHeight)
+}
 var connection;
 var connected;
 
@@ -68,20 +72,28 @@ function wsHandler(e) {
 	if (d.Id == "setup finish apk") {
         document.getElementById("log").innerHTML = ""
         logMessage(d.Data);
-        logMessage("downloading");
+        logMessage("downloading:" + d.Data);
 		getApk(d.Data)
         return
     }
 	//if (e.data.match("setup finish win")  == "setup finish win") {
-	if (d.Id  == "setup finish win") {
+	else if (d.Id  == "setup finish win") {
         document.getElementById("log").innerHTML = ""
         logMessage(d.Data);
-        logMessage("downloading");
-        getApk(d.Data)
+        logMessage("downloading:"+d.Data);
+        getWin(d.Data)
         //getWin(e.data.replace(/setup finish win / ,""))
         return
-    }
-    logMessage(d.Data);
+	}
+	else if (d.Id == "0") {
+		logMessage(d.Data);
+	}
+	else if (d.Id == "1") {
+		errMessage(d.Data);
+	}
+	else {
+		logMessage(d.Data);
+	}
     //$('#blob').css('margin-left', d.X);
     //$('#blob').css('margin-top', d.Y);
 }
@@ -100,3 +112,8 @@ function resetWin(urlname) {
 	var msg = '{"Id":"setup win","Data":"' + urlname + '"}';
 	if (connection) { connection.send(msg); }
 }
+function resetHuoDong(urlname) {
+	var msg = '{"Id":"reset huodong","Data":"' + urlname + '"}';
+	if (connection) { connection.send(msg); }
+}
+
