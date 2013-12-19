@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Zebra>
+	<global>
+		<!-- Use the specified local network device. -->
+		<mysql encode="no">mysql://root:123@127.0.0.1:3306/MonitorServer</mysql>
+		<ifname>eth1</ifname>
+	</global>
+	<ApkServer>
+		<ip>180.168.197.87</ip>
+		<port>28080</port>
+		<download_apk_fxsj>svn/trunk/cocos/cocos2d-x-2.1.4/projects/fxsj/proj.android/bin/</download_apk_fxsj>
+		<download_apk_fxsj_file>fxsj-debug.apk</download_apk_fxsj_file>
+		<download_win_fxsj>svn/trunk/cocos/cocos2d-x-2.1.4/projects/fxsj/</download_win_fxsj>
+		<download_win_fxsj_file>fxsj-win.7z</download_win_fxsj_file>
+		<bat_apk_fxsj>svn\\trunk\\cocos\\cocos2d-x-2.1.4\\projects\\fxsj\\publish_android.bat</bat_apk_fxsj>
+		<bat_win_fxsj>svn\\trunk\\cocos\\cocos2d-x-2.1.4\\projects\\fxsj\\publish_windows.bat</bat_win_fxsj>
+		<bat_huodong_fxsj>svn\\trunk\\cocos\\cocos2d-x-2.1.4\\projects\\fxsj\\publish_huodong.bat</bat_huodong_fxsj>
+		<bat_resource_fxsj>svn\\trunk\\cocos\\cocos2d-x-2.1.4\\projects\\fxsj\\update_resource.bat</bat_resource_fxsj>
+		<mobile_game_fxsj>fxsj</mobile_game_fxsj>
+		<mobile_game_fxsj_name>飞行射击</mobile_game_fxsj_name>
+
+		<download_apk_fxsj-zh>svn/trunk/cocos/cocos2d-x-2.1.4/projects/fxsj-zh/proj.android/bin/</download_apk_fxsj-zh>
+		<download_apk_fxsj-zh_file>fxsj-zh-debug.apk</download_apk_fxsj-zh_file>
+		<download_win_fxsj-zh>svn/trunk/cocos/cocos2d-x-2.1.4/projects/fxsj-zh/</download_win_fxsj-zh>
+		<download_win_fxsj-zh_file>fxsj-zh-win.7z</download_win_fxsj-zh_file>
+		<bat_apk_fxsj-zh>svn\\trunk\\cocos\\cocos2d-x-2.1.4\\projects\\fxsj-zh\\publish_android.bat</bat_apk_fxsj-zh>
+		<bat_win_fxsj-zh>svn\\trunk\\cocos\\cocos2d-x-2.1.4\\projects\\fxsj-zh\\publish_windows.bat</bat_win_fxsj-zh>
+		<bat_huodong_fxsj-zh>svn\\trunk\\cocos\\cocos2d-x-2.1.4\\projects\\fxsj-zh\\publish_huodong.bat</bat_huodong_fxsj-zh>
+		<bat_resource_fxsj-zh>svn\\trunk\\cocos\\cocos2d-x-2.1.4\\projects\\fxsj-zh\\update_resource.bat</bat_resource_fxsj-zh>
+		<mobile_game_fxsj-zh>fxsj-zh</mobile_game_fxsj-zh>
+		<mobile_game_fxsj-zh_name>星空激战</mobile_game_fxsj-zh_name>
+
+
+		<download_apk_hxsg>svn/trunk/cocos/cocos2d-x-2.1.4/projects/hxsg/proj.android/bin/</download_apk_hxsg>
+		<download_apk_hxsg_file>hxsg-debug.apk</download_apk_hxsg_file>
+		<download_win_hxsg>svn/trunk/cocos/cocos2d-x-2.1.4/projects/hxsg/</download_win_hxsg>
+		<download_win_hxsg_file>hxsg-win.7z</download_win_hxsg_file>
+		<bat_apk_hxsg>svn\\trunk\\cocos\\cocos2d-x-2.1.4\\projects\\hxsg\\publish_version_diff.bat</bat_apk_hxsg>
+		<bat_win_hxsg>svn\\trunk\\cocos\\cocos2d-x-2.1.4\\projects\\hxsg\\publish_version_diff.bat</bat_win_hxsg>
+		<bat_huodong_hxsg>svn\\trunk\\cocos\\cocos2d-x-2.1.4\\projects\\hxsg\\publish_huodong.bat</bat_huodong_hxsg>
+		<bat_resource_hxsg>svn\\trunk\\cocos\\cocos2d-x-2.1.4\\projects\\hxsg\\update_resource.bat</bat_resource_hxsg>
+		<mobile_game_hxsg>hxsg</mobile_game_hxsg>
+		<mobile_game_hxsg_name>幻想三国</mobile_game_hxsg_name>
+		<download_apk_sbjs>svn/trunk/cocos/cocos2d-x-2.1.4/projects/sbjs/proj.android/bin/</download_apk_sbjs>
+		<download_apk_sbjs_file>sbjs-debug.apk</download_apk_sbjs_file>
+		<download_win_sbjs>svn/trunk/cocos/cocos2d-x-2.1.4/projects/sbjs/</download_win_sbjs>
+		<download_win_sbjs_file>sbjs-win.7z</download_win_sbjs_file>
+		<bat_apk_sbjs>svn\\trunk\\cocos\\cocos2d-x-2.1.4\\projects\\sbjs\\publish_android.bat</bat_apk_sbjs>
+		<bat_win_sbjs>svn\\trunk\\cocos\\cocos2d-x-2.1.4\\projects\\sbjs\\publish_windows.bat</bat_win_sbjs>
+		<bat_huodong_sbjs>svn\\trunk\\cocos\\cocos2d-x-2.1.4\\projects\\sbjs\\publish_huodong.bat</bat_huodong_sbjs>
+		<bat_resource_sbjs>svn\\trunk\\cocos\\cocos2d-x-2.1.4\\projects\\sbjs\\update_resource.bat</bat_resource_sbjs>
+		<mobile_game_sbjs>sbjs</mobile_game_sbjs>
+		<mobile_game_sbjs_name>竖版僵尸</mobile_game_sbjs_name>
+		<download_apk_ffsx>proj.android\bin\hxsg-debug.apk</download_apk_ffsx>
+		<download_win_ffsx>js/apksetup.js</download_win_ffsx>
+		<bat_apk_ffsx>test.bat</bat_apk_ffsx>
+		<bat_win_ffsx>test.bat</bat_win_ffsx>
+		<mobile_game_ffsx>ffsx</mobile_game_ffsx>
+		<mobile_game_ffsx_name>付费三消</mobile_game_ffsx_name>
+	</ApkServer>
+	<MobileLogServer>
+		<ip>192.168.85.71</ip>
+		<port>18180</port>
+		<loginServerList>loginServerList.xml</loginServerList>
+	</MobileLogServer>
+</Zebra>

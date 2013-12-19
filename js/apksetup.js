@@ -117,6 +117,6 @@ function resetHuoDong(urlname) {
 	if (connection) { connection.send(msg); }
 }
 function updateResouce(urlname) {
-	var msg = '{"Id":"update resouce","Data":"' + urlname + '"}';
+	var msg = '{"Id":"update resource","Data":"' + urlname + '"}';
 	if (connection) { connection.send(msg); }
 }
