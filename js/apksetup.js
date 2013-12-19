@@ -7,7 +7,7 @@ $(document).ready(function() {
     $(document).keydown(function(e) {
     	var msg = '{"Id":"keyboard","Data"=""}';
 
-    	jmsg = $.parseJSON(msg)
+    	var jmsg = $.parseJSON(msg)
 		if (e.which == 37) {
 			jmsg.Data='l';
         }
@@ -92,7 +92,7 @@ function wsHandler(e) {
 		errMessage(d.Data);
 	}
 	else {
-		logMessage(d.Data);
+		logMessage(d.Id + ":" + d.Data);
 	}
     //$('#blob').css('margin-left', d.X);
     //$('#blob').css('margin-top', d.Y);
@@ -116,4 +116,7 @@ function resetHuoDong(urlname) {
 	var msg = '{"Id":"reset huodong","Data":"' + urlname + '"}';
 	if (connection) { connection.send(msg); }
 }
-
+function updateResouce(urlname) {
+	var msg = '{"Id":"update resouce","Data":"' + urlname + '"}';
+	if (connection) { connection.send(msg); }
+}
