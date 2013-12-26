@@ -65,8 +65,9 @@ func SetupServer(ws *websocket.Conn) {
 						//execBat("publish_android.bat", ws)
 						//execBat("copy_apk.bat", ws)
 						SendMessage("0", []byte(config.GetConfigStr("bat_apk_"+game)), ws)
-						execBat(config.GetConfigStr("bat_apk_"+game), ws)
-						Broadcask("setup finish apk", []byte(game), ws)
+						if execBat(config.GetConfigStr("bat_apk_"+game), ws) == true {
+							Broadcask("setup finish apk", []byte(game), ws)
+						}
 						for k, v2 := range socketMap {
 							if v2 == game {
 								gamesMap[v2]--
@@ -99,8 +100,9 @@ func SetupServer(ws *websocket.Conn) {
 						//execBat("publish_android.bat", ws)
 						//execBat("copy_apk.bat", ws)
 						SendMessage("0", []byte(config.GetConfigStr("bat_apk_"+game)), ws)
-						execBat(config.GetConfigStr("bat_win_"+game), ws)
-						Broadcask("setup finish win", []byte(game), ws)
+						if execBat(config.GetConfigStr("bat_win_"+game), ws) == true {
+							Broadcask("setup finish win", []byte(game), ws)
+						}
 						for k, v2 := range socketMap {
 							if v2 == game {
 								gamesMap[v2]--
@@ -133,8 +135,9 @@ func SetupServer(ws *websocket.Conn) {
 						//execBat("publish_android.bat", ws)
 						//execBat("copy_apk.bat", ws)
 						SendMessage("0", []byte(config.GetConfigStr("bat_huodong_"+game)), ws)
-						execBat(config.GetConfigStr("bat_huodong_"+game), ws)
-						Broadcask("setup finish reset huodong", []byte(game), ws)
+						if execBat(config.GetConfigStr("bat_huodong_"+game), ws) == true {
+							Broadcask("setup finish reset huodong", []byte(game), ws)
+						}
 						for k, v2 := range socketMap {
 							if v2 == game {
 								gamesMap[v2]--
@@ -167,8 +170,9 @@ func SetupServer(ws *websocket.Conn) {
 						//execBat("publish_android.bat", ws)
 						//execBat("copy_apk.bat", ws)
 						SendMessage("0", []byte(config.GetConfigStr("bat_resource_"+game)), ws)
-						execBat(config.GetConfigStr("bat_resource_"+game), ws)
-						Broadcask("setup finish update resource", []byte(game), ws)
+						if execBat(config.GetConfigStr("bat_resource_"+game), ws) == true {
+							Broadcask("setup finish update resource", []byte(game), ws)
+						}
 						for k, v2 := range socketMap {
 							if v2 == game {
 								gamesMap[v2]--
@@ -234,7 +238,7 @@ func BroadcaskJSON(msg *JSONCommand, ws *websocket.Conn) {
 func SendJSON(msg *JSONCommand, ws *websocket.Conn) {
 	websocket.JSON.Send(ws, msg)
 }
-func execBat(bat string, ws *websocket.Conn) {
+func execBat(bat string, ws *websocket.Conn) bool {
 	cmd := exec.Command(bat)
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
@@ -252,7 +256,11 @@ func execBat(bat string, ws *websocket.Conn) {
 	}
 	go outputFunc(stdout, ws)
 	go outputFunc(stdin, ws)
-	cmd.Wait()
+	err = cmd.Wait()
+	if err == nil {
+		return true
+	}
+	return false
 }
 func downloadWinFunc(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(r.URL.String())
