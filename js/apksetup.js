@@ -120,3 +120,7 @@ function updateResouce(urlname) {
 	var msg = '{"Id":"update resource","Data":"' + urlname + '"}';
 	if (connection) { connection.send(msg); }
 }
+function restartServer(urlname) {
+    var msg = '{"Id":"restart server","Data":"' + urlname + '"}';
+    if (connection) { connection.send(msg); }
+}
