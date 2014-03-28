@@ -193,6 +193,41 @@ func SetupServer(ws *websocket.Conn) {
 				SendMessage("0", []byte("重复加入"), ws)
 			}
 		}
+		if strings.Contains(message.Id, "restart server") {
+			game := message.Data
+			if _, ok := socketMap[ws]; !ok {
+				if v, ok := gamesMap[game]; ok {
+					gamesMap[game]++
+					socketMap[ws] = game
+					Broadcask("0", []byte("增加后当前用户数量:"+game+":"+strconv.Itoa(gamesMap[game])), ws)
+					if v == 0 {
+						SendMessage("0", []byte("start restart server:"+game+" now..."), ws)
+						//execBat("publish_android.bat", ws)
+						//execBat("copy_apk.bat", ws)
+						SendMessage("0", []byte(config.GetConfigStr("bat_restart_"+game)), ws)
+						if execBat(config.GetConfigStr("bat_restart_"+game), ws) == true {
+							Broadcask("finish restart server", []byte(game), ws)
+						}
+						for k, v2 := range socketMap {
+							if v2 == game {
+								gamesMap[v2]--
+								delete(socketMap, k)
+								Broadcask("0", []byte("完成减少后当前用户数量:"+v2+":"+strconv.Itoa(gamesMap[v2])), ws)
+							}
+						}
+						for _, v2 := range socketMap {
+							if v2 == game {
+								//k.Close()
+							}
+						}
+					} else {
+						SendMessage("0", []byte("wait update resource:"+game+" now..."), ws)
+					}
+				}
+			} else {
+				SendMessage("0", []byte("重复加入"), ws)
+			}
+		}
 
 		//err = websocket.JSON.Send(ws, world.Update(message))
 		//if err != nil {
