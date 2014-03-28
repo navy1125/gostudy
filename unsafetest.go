@@ -26,6 +26,11 @@ func main() {
 	fmt.Println(unsafe.Sizeof(rect))
 	pt := (*Point)(unsafe.Pointer(&rect))
 	fmt.Println(rect, pt)
+	c := make(chan int, 2)//修改2为1就报错，修改2为3可以正常运行
+	c <- 1
+	c <- 2
+	fmt.Println(<-c)
+	fmt.Println(<-c)
 	ch := make(chan []byte)
 	go func() {
 		buf := make([]byte, 1024*1000)

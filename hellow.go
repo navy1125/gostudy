@@ -8,6 +8,7 @@ import (
 	iconv "github.com/hwch/iconv"
 	"os"
 	"runtime"
+	"strconv"
 	//"rand"
 	//"C"
 )
@@ -16,7 +17,20 @@ var (
 	TestMap map[string]string
 )
 
+func TestPanic() {
+	panic("ddddddddddddd")
+}
+
 func main() {
+	defer func() {
+		if x := recover(); x != nil {
+			fmt.Println(x)
+		}
+	}()
+	stra := "a"
+	str := fmt.Sprintf("%03o,%d", stra[0], stra[0])
+	aa, _ := strconv.ParseInt("141", 8, 32)
+	fmt.Println("str:", str, aa, fmt.Sprintf("%c", aa))
 	converter, err := iconv.NewCoder(iconv.GBK2312_UTF8_IDX)
 	if err != nil {
 		fmt.Println("iconv err:", err)
@@ -44,4 +58,5 @@ func main() {
 	TestMap["whj"] = "wanghaijun@ztgame.com"
 	fmt.Println(TestMap)
 	fmt.Println(TestMap["whj"])
+	TestPanic()
 }

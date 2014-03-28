@@ -34,4 +34,4 @@ func Info(v TestInterface) {
 	if ok {
 		f.Test()
 	}
-}
+}StdoutHandler
