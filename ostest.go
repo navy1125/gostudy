@@ -5,12 +5,17 @@ package main
 import (
 	"flag"
 	"fmt"
+	"git.code4.in/logging"
 	iconv "github.com/hwch/iconv"
+	"go/build"
 	"os"
+	"path"
 	"runtime"
 	"strconv"
 	//"rand"
 	//"C"
+	"log"
+	"time"
 )
 
 var (
@@ -22,7 +27,30 @@ func TestPanic() {
 }
 
 func main() {
-	fmt.Println("GOOS:", runtime.GOARCH)
+	ch := make(chan int, 1)
+	//for v := range ch {
+	//	fmt.Println("cccccccccc:%v", v)
+	//}
+	fmt.Println(runtime.GOMAXPROCS(runtime.NumCPU()), runtime.NumCPU(), runtime.GOROOT())
+	fmt.Println(runtime.GOMAXPROCS(runtime.NumCPU()), runtime.NumCPU())
+	fmt.Println(len(ch), cap(ch))
+	time.Sleep(time.Second)
+	ch <- 2
+	os.Exit(0)
+	ch1 := ch
+	if ch1 == ch {
+		fmt.Println("aaaaaaaaaaaaaa%v,%v", ch1, ch)
+	}
+	ch = make(chan int, 3)
+	close(ch1)
+	for b1 := range ch1 {
+		logging.Debug("%v,%v", b1)
+	}
+	fmt.Println(len(ch))
+	os.Exit(0)
+	logging.Debug(path.Dir("c/b/b"))
+	log.Println("GOOS:", runtime.GOARCH, runtime.GOOS, build.Default)
+	os.Exit(0)
 	defer func() {
 		if x := recover(); x != nil {
 			fmt.Println(x)
