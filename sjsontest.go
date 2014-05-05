@@ -7,6 +7,8 @@ import (
 )
 
 func main() {
+	_, err := sjson.NewJson([]byte(`{"do":"register-auto", "gameid":301, "data":{"mid":"-24912448"}}`))
+	fmt.Println(err)
 	sjs, _ := sjson.NewJson([]byte(`{
 	"curequip":[1,2,3,4,5],
 	"effect":70,

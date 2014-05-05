@@ -6,6 +6,14 @@ import (
 	"os"
 )
 
+type Test struct{
+	Items []struct{
+		Id uint32
+		Num uint32
+		Str string
+	}
+}
+
 func main() {
 	var port int
 	flag.IntVar(&port, "port", 80, "usage")
