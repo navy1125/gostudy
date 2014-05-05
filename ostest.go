@@ -27,7 +27,16 @@ func TestPanic() {
 }
 
 func main() {
-	ch := make(chan int, 1)
+	ch := make(chan int, 2)
+	ch <- 1
+	ch <- 2
+	for c := range ch {
+		switch c {
+		case 1:
+			break
+		}
+		fmt.Println(c)
+	}
 	//for v := range ch {
 	//	fmt.Println("cccccccccc:%v", v)
 	//}
@@ -42,8 +51,8 @@ func main() {
 		fmt.Println("aaaaaaaaaaaaaa%v,%v", ch1, ch)
 	}
 	ch = make(chan int, 3)
-	close(ch1)
 	for b1 := range ch1 {
+
 		logging.Debug("%v,%v", b1)
 	}
 	fmt.Println(len(ch))
