@@ -7,6 +7,7 @@ import (
 	"fmt"
 	iconv "github.com/hwch/iconv"
 	"os"
+	"reflect"
 	"runtime"
 	"strconv"
 	//"rand"
@@ -17,11 +18,43 @@ var (
 	TestMap map[string]string
 )
 
+type Struct struct {
+	TestI int
+}
+
+func (self *Struct) Print() {
+	fmt.Println("aaaaaaaaaaaa:", self.TestI)
+}
+func (self *Struct) Print1() {
+	fmt.Println("xxxxxxxxxxxxx:")
+}
+
+type StructInterface interface {
+	Print()
+}
+
+func TestStruct(st StructInterface) {
+	s := st.(*Struct)
+	s.Print()
+}
+
 func TestPanic() {
 	panic("ddddddddddddd")
 }
 
+func parseGatewayTaskNullGateCmd(v interface{}) bool {
+	call := reflect.ValueOf(v).MethodByName("Print1")
+	if call.IsValid() == true {
+		call.Call([]reflect.Value{})
+		fmt.Println(reflect.TypeOf(v))
+		return true
+	}
+	return true
+}
 func main() {
+	st := &Struct{}
+	parseGatewayTaskNullGateCmd(st)
+	TestStruct(st)
 	defer func() {
 		if x := recover(); x != nil {
 			fmt.Println(x)
