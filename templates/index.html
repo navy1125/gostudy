@@ -5,13 +5,15 @@
     <script src="js/apksetup.js" type="text/javascript"></script>
 </head>
 <body>
-<input  type="button" value="{{.Name}}安卓打包下载" onclick="resetApk({{.UrlName}})" style="font-size: 20px;padding: 12px 26px;margin: 32px 16px;"/>
-    <input type="button" value="{{.Name}}windows打包下载" onclick="resetWin({{.UrlName}})" style="font-size: 20px;padding: 12px 26px;margin: 32px 16px;" />
-    <input type="button" value="{{.Name}}安卓版本下载" onclick="getApk({{.UrlName}})" style="font-size: 20px;padding: 12px 26px;margin: 32px 16px;"/>
-    <input type="button" value="{{.Name}}windows版本下载" onclick="getWin({{.UrlName}})" style="font-size: 20px;padding: 12px 26px;margin: 32px 16px;"/>
+<input  type="button" value="{{.Name}}日常版本" onclick="resetApk({{.UrlName}})" style="font-size: 20px;padding: 12px 26px;margin: 32px 16px;"/>
+    <input type="button" value="{{.Name}}全新版本" onclick="resetWin({{.UrlName}})" style="font-size: 20px;padding: 12px 26px;margin: 32px 16px;" />
+    <input type="button" value="{{.Name}}安卓下载" onclick="getApk({{.UrlName}})" style="font-size: 20px;padding: 12px 26px;margin: 32px 16px;"/>
+    <input type="button" value="{{.Name}}pc版下载" onclick="getWin({{.UrlName}})" style="font-size: 20px;padding: 12px 26px;margin: 32px 16px;"/>
     <input type="button" value="{{.Name}}活动专用" onclick="resetHuoDong({{.UrlName}})" style="font-size: 20px;padding: 12px 26px;margin: 32px 16px;"/>
     <input type="button" value="{{.Name}}资源检查" onclick="updateResouce({{.UrlName}})" style="font-size: 20px;padding: 12px 26px;margin: 32px 16px;"/>
     <input type="button" value="{{.Name}}重启服务器" onclick="restartServer({{.UrlName}})" style="font-size: 20px;padding: 12px 26px;margin: 32px 16px;"/>
+    <input type="button" value="{{.Name}}新版发布" onclick="publishApk({{.UrlName}})" style="font-size: 20px;padding: 12px 26px;margin: 32px 16px;"/>
+    <input type="button" value="{{.Name}}补丁发布" onclick="publishPath({{.UrlName}})" style="font-size: 20px;padding: 12px 26px;margin: 32px 16px;"/>
      <!--form action="/download_apk">
 	    <input type="submit" value="下载apk文件" />
      </!--form>

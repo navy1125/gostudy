@@ -124,3 +124,11 @@ function restartServer(urlname) {
     var msg = '{"Id":"restart server","Data":"' + urlname + '"}';
     if (connection) { connection.send(msg); }
 }
+function publishApk(urlname) {
+	var msg = '{"Id":"publish apk","Data":"' + urlname + '"}';
+	if (connection) { connection.send(msg); }
+}
+function publishPath(urlname) {
+	var msg = '{"Id":"publish patch","Data":"' + urlname + '"}';
+	if (connection) { connection.send(msg); }
+}
