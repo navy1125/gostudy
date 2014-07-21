@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/navy1125/config"
+	"github.com/xuyu/iconv"
 	mysql "github.com/ziutek/mymysql/autorc"
 	_ "github.com/ziutek/mymysql/thrsafe" // You may also use the native engine
 	"io"
@@ -29,22 +30,126 @@ var (
 )
 
 type SdoRetData struct {
-	SndaId      uint `json:"sndaId,omitempty"`
+	SndaId      uint `json:"sndaId"`
 	MaxLevel    int  `json:"maxLevel,omitempty"`
 	Logined     bool `json:"logined,omitempty"`
 	IsPreCreate bool `json:"IsPreCreate,omitempty"`
 }
 type SdoRet struct {
 	Return_code    int        `json:"return_code"`
-	Return_message string     `json:"Return_message"`
+	Return_message string     `json:"return_message"`
 	Data           SdoRetData `json:"data,omitempty"`
 }
+type SdoRetCardData struct {
+	SndaId      uint   `json:"sndaId"`
+	KeyString   string `json:"keystring,omitempty"`
+	Charid      uint   `json:"charid,omitempty"`
+	Name        string `json:"name,omitempty"`
+	Accid       uint   `json:"accid,omitempty"`
+	Zone        uint   `json:"zone,omitempty"`
+	Plat_accid  uint   `json:"plat_accid,omitempty"`
+	IsPreCreate bool   `json:"IsPreCreate,omitempty"`
+}
+type SdoRetCard struct {
+	Return_code    int            `json:"return_code"`
+	Return_message string         `json:"return_message"`
+	Data           SdoRetCardData `json:"data,omitempty"`
+}
+type SdoRetCardCountData struct {
+	KeyString string `json:"keystring,omitempty"`
+	Count     uint   `json:"count,omitempty"`
+}
+type SdoRetCardCount struct {
+	Return_code    int                 `json:"return_code"`
+	Return_message string              `json:"return_message"`
+	Data           SdoRetCardCountData `json:"data,omitempty"`
+}
 
+func HandleGonghuiKeyCard(w http.ResponseWriter, req *http.Request) {
+	defer req.Body.Close()
+	var keystring string
+	var count int
+	rows, res, err := db_monitor.Query("SELECT COUNT(USERID) AS COUNT FROM SDO_GONGHUI_CARD_USER WHERE KEYSTRING = '" + req.FormValue("KeyString") + "'")
+	if err != nil {
+		logging.Error("select err:%s", err.Error())
+		return
+	}
+	if len(rows) != 0 {
+		COUNT := res.Map("COUNT")
+		count = rows[0].Int(COUNT)
+	}
+	ret := SdoRetCardCount{
+		Return_code:    0,
+		Return_message: "",
+		Data: SdoRetCardCountData{
+			KeyString: keystring,
+			Count:     uint(count),
+		},
+	}
+	b, _ := json.Marshal(ret)
+	w.Write(b)
+	logging.Debug("gonghui keystring:%s", req.FormValue("sndaId"))
+}
+func HandleGonghuiUserCard(w http.ResponseWriter, req *http.Request) {
+	defer req.Body.Close()
+	sndaid, _ := strconv.Atoi(req.FormValue("sndaId"))
+	maxlevel := 0
+	keystring := ""
+	userid := 0
+	name := ""
+	accid := 0
+	plat_accid := 0
+	zone := 0
+	rows, res, err := db_monitor.Query("SELECT KEYSTRING,USERID,NAME,`ZONE`,ACCID,PLAT_ACCID FROM SDO_GONGHUI_CARD_USER WHERE PLAT_ACCID = " + req.FormValue("sndaId"))
+	if err != nil {
+		logging.Error("select err:%s", err.Error())
+		return
+	}
+	convert, err1 := iconv.Open("GB2312", "UTF-8")
+	if len(rows) != 0 {
+		KEYSTRING := res.Map("KEYSTRING")
+		USERID := res.Map("USERID")
+		NAME := res.Map("NAME")
+		ZONE := res.Map("ZONE")
+		ACCID := res.Map("ACCID")
+		PLAT_ACCID := res.Map("PLAT_ACCID")
+		keystring = rows[0].Str(KEYSTRING)
+		userid = rows[0].Int(USERID)
+		if err1 == nil {
+			var err2 error
+			name, err2 = convert.ConvString(rows[0].Str(NAME))
+			if err2 != nil {
+				name = rows[0].Str(NAME)
+			}
+		} else {
+			name = rows[0].Str(NAME)
+		}
+		accid = rows[0].Int(ACCID)
+		zone = rows[0].Int(ZONE)
+		plat_accid = rows[0].Int(PLAT_ACCID)
+	}
+	ret := SdoRetCard{
+		Return_code:    0,
+		Return_message: "",
+		Data: SdoRetCardData{
+			SndaId:     uint(sndaid),
+			KeyString:  keystring,
+			Charid:     uint(userid),
+			Name:       name,
+			Accid:      uint(accid),
+			Zone:       uint(zone),
+			Plat_accid: uint(plat_accid),
+		},
+	}
+	b, _ := json.Marshal(ret)
+	w.Write(b)
+	logging.Debug("gonghui card:%s,%d", req.FormValue("sndaId"), maxlevel)
+}
 func HandleMaxlevel(w http.ResponseWriter, req *http.Request) {
 	defer req.Body.Close()
 	maxlevel := 0
-	query_string := "SELECT MAXLEVEL FROM USERMAXLEVEL WHERE ACCOUNT = 'S:" + req.FormValue("sndaId") + "'"
-	rows, res, err := db_monitor.Query(query_string)
+	sndaid, _ := strconv.Atoi(req.FormValue("sndaId"))
+	rows, res, err := db_monitor.Query("SELECT MAXLEVEL FROM USERMAXLEVEL WHERE ACCOUNT = 'S:" + req.FormValue("sndaId") + ":" + req.FormValue("sndaId") + "'")
 	if err != nil {
 		logging.Error("select err:%s", err.Error())
 		return
@@ -57,7 +162,9 @@ func HandleMaxlevel(w http.ResponseWriter, req *http.Request) {
 		Return_code:    0,
 		Return_message: "",
 		Data: SdoRetData{
-			MaxLevel: maxlevel},
+			SndaId:   uint(sndaid),
+			MaxLevel: maxlevel,
+		},
 	}
 	b, _ := json.Marshal(ret)
 	w.Write(b)
@@ -65,12 +172,14 @@ func HandleMaxlevel(w http.ResponseWriter, req *http.Request) {
 }
 func HandleIsPrecreate(w http.ResponseWriter, req *http.Request) {
 	defer req.Body.Close()
-	accid := GetAccidBySndaId(req.FormValue("sndaId"))
+	accid, sndaid := GetAccidBySndaId(req.FormValue("sndaId"))
 	ret := SdoRet{
 		Return_code:    0,
 		Return_message: "",
 		Data: SdoRetData{
-			IsPreCreate: false},
+			SndaId:      uint(sndaid),
+			IsPreCreate: false,
+		},
 	}
 	for zoneid, _ := range zoneid_map {
 		query_string := fmt.Sprintf("SELECT FIRSTDAY FROM USER_DATA_%d where ACCID=%d", zoneid, accid)
@@ -93,12 +202,14 @@ func HandleIsPrecreate(w http.ResponseWriter, req *http.Request) {
 }
 func HandleIsOnline(w http.ResponseWriter, req *http.Request) {
 	defer req.Body.Close()
-	accid := GetAccidBySndaId(req.FormValue("sndaId"))
+	accid, sndaid := GetAccidBySndaId(req.FormValue("sndaId"))
 	ret := SdoRet{
 		Return_code:    0,
 		Return_message: "",
 		Data: SdoRetData{
-			Logined: false},
+			SndaId:  uint(sndaid),
+			Logined: false,
+		},
 	}
 	for zoneid, _ := range zoneid_map {
 		query_string := fmt.Sprintf("SELECT LASTDAY FROM USER_DATA_%d where ACCID=%d", zoneid, accid)
@@ -119,21 +230,20 @@ func HandleIsOnline(w http.ResponseWriter, req *http.Request) {
 	w.Write(b)
 	logging.Debug("isonline:%s,%v", req.FormValue("sndaId"), ret.Data.Logined)
 }
-func GetAccidBySndaId(sndastr string) uint32 {
+func GetAccidBySndaId(sndastr string) (uint32, uint32) {
 	sndaid, _ := strconv.Atoi(sndastr)
 	accid := uint32(0)
-	query_string := "SELECT ACCID FROM ACCOUNT WHERE ACCOUNTID = " + strconv.Itoa(int(sndaid))
-	rows, res, err := db_account.Query(query_string)
+	rows, res, err := db_account.Query("SELECT ACCID FROM ACCOUNT WHERE ACCOUNTID = " + strconv.Itoa(int(sndaid)))
 	if err != nil {
 		logging.Error("select err:%s", err.Error())
-		return accid
+		return accid, uint32(sndaid)
 	}
 	if len(rows) != 0 {
 		id := res.Map("ACCID")
 		accid = uint32(rows[0].Int(id))
 	}
 	logging.Debug("accid:%d,%d", sndaid, accid)
-	return accid
+	return accid, uint32(sndaid)
 }
 func GetUnixTime() int64 {
 	now := time.Now()
@@ -163,15 +273,13 @@ func OnlineServer(w http.ResponseWriter, req *http.Request) {
 		zones[id] = 0
 		zoneid_map[uint32(row.Int(gameid)<<16+row.Int(zoneid))] = row.Str(name)
 	}
-	query_string := "select * from ONLINENUM_TODAY where timestamp_min = " + strconv.Itoa(min)
-	rows, res, err = db_monitor.Query(query_string)
+	rows, res, err = db_monitor.Query("select * from ONLINENUM_TODAY where timestamp_min = " + strconv.Itoa(min))
 	if err != nil {
 		logging.Error("select err:%s", err.Error())
 	}
 	if len(rows) == 0 {
 		min = int((GetUnixTime())/60) - 2
-		query_string = "select * from ONLINENUM_TODAY where timestamp_min = " + strconv.Itoa(min)
-		rows, res, err = db_monitor.Query(query_string)
+		rows, res, err = db_monitor.Query("select * from ONLINENUM_TODAY where timestamp_min = " + strconv.Itoa(min))
 		if err != nil {
 			logging.Error("select err:%s", err.Error())
 		}
@@ -212,15 +320,13 @@ func OnlineCountryServer(w http.ResponseWriter, req *http.Request) {
 		zones[(id<<16)+5] = 0
 		zones[(id<<16)+6] = 0
 	}
-	query_string := "select * from COUNTRYONLINENUM_TODAY where timestamp_min = " + strconv.Itoa(min)
-	rows, res, err = db_monitor.Query(query_string)
+	rows, res, err = db_monitor.Query("select * from COUNTRYONLINENUM_TODAY where timestamp_min = " + strconv.Itoa(min))
 	if err != nil {
 		logging.Error("select err:%s", err.Error())
 	}
 	if len(rows) == 0 {
 		min = int((GetUnixTime())/60) - 2
-		query_string = "select * from COUNTRYONLINENUM_TODAY where timestamp_min = " + strconv.Itoa(min)
-		rows, res, err = db_monitor.Query(query_string)
+		rows, res, err = db_monitor.Query("select * from COUNTRYONLINENUM_TODAY where timestamp_min = " + strconv.Itoa(min))
 		if err != nil {
 			logging.Error("select err:%s", err.Error())
 		}
@@ -311,6 +417,8 @@ func main() {
 	http.HandleFunc("/gjia/maxlevel", HandleMaxlevel)
 	http.HandleFunc("/gjia/isprecreate", HandleIsPrecreate)
 	http.HandleFunc("/gjia/isonline", HandleIsOnline)
+	http.HandleFunc("/card/gonghuiuser", HandleGonghuiUserCard)
+	http.HandleFunc("/card/gonghuikey", HandleGonghuiKeyCard)
 	err = http.ListenAndServe(":"+config.GetConfigStr("port"), nil)
 	if err != nil {
 		logging.Error("ListenAndServe:%s", err.Error())

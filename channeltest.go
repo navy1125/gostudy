@@ -14,28 +14,23 @@ func main() {
 		m[i] = c
 		m[i] <- i
 		go func() {
-			tick := time.NewTicker(time.Millisecond * 50)
-			tickmin := time.NewTicker(time.Second)
 			loop := true
 			for loop {
 				select {
 				case cc, ok := <-c:
 					fmt.Println(cc, i, ok)
-					loop = ok
-				case <-tick.C:
-				case <-tickmin.C:
-					loop = false
+					//loop = ok
+				default:
+					time.Sleep(time.Millisecond * 50)
 				}
 			}
-			tick.Stop()
-			tickmin.Stop()
 			fmt.Println("aaaaaaaaaaa", i, loop)
 		}()
 	}
 	time.Sleep(time.Second * 10)
-	for _, v := range m {
-		close(v)
-	}
+	//for _, v := range m {
+	//close(v)
+	//}
 
 	//c = nil
 	for true {
