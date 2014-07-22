@@ -190,7 +190,8 @@ func HandleIsPrecreate(w http.ResponseWriter, req *http.Request) {
 		if len(rows) != 0 {
 			FIRSTDAY := res.Map("FIRSTDAY")
 			firstday := rows[0].Int(FIRSTDAY)
-			if firstday < int(GetUnixTime()/60) {
+			//if firstday < int(GetUnixTime()/60) {
+			if firstday < int(1406181600/60) {
 				ret.Data.IsPreCreate = true
 				break
 			}
