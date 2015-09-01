@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"compress/flate"
 	"fmt"
-	"git.code4.in/mobilegameserver/libgame/libcompress"
+	//"git.code4.in/mobilegameserver/libgame/libcompress"
 )
 
 //import "io/ioutil"
@@ -17,20 +17,21 @@ func main() {
 	inData := []byte(`{"do":"request-zone-list","data":{"gameid":170},"gameid":170}`)
 	compressedData := new(bytes.Buffer)
 	//compress(inData, compressedData, 9)
-	compressdict(inData, compressedData, -1, dict)
+	compressdict(inData, compressedData, 9, dict)
+	data := compressedData.Bytes()
+	fmt.Println(fmt.Sprintf("%o,%s,%d,%x", data, string(data), data, data))
 
-	data, _ := libcompress.Compress(inData)
-	fmt.Println("commpress len:", len(inData), compressedData.Len(), len(data), data)
+	//data, _ := libcompress.Compress(inData)
+	fmt.Println("commpress len:", len(inData), compressedData.Len())
 	//ioutil.WriteFile("compressed.dat", compressedData.Bytes(), os.ModeAppend)
 
 	deCompressedData := new(bytes.Buffer)
 	//decompress(compressedData, deCompressedData)
 	decompressdict(compressedData, deCompressedData, dict)
 	fmt.Println(deCompressedData)
-	outdata, _ := libcompress.Decompress(data)
-	fmt.Println(deCompressedData)
-	fmt.Println(string(outdata))
-	fmt.Println(fmt.Sprintf("%o,%s,%d,%x", data, string(data), data, data))
+	//outdata, _ := libcompress.Decompress(data)
+	//fmt.Println(deCompressedData)
+	//fmt.Println(string(outdata))
 
 }
 func compress(src []byte, dest io.Writer, level int) {
