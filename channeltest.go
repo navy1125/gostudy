@@ -7,6 +7,12 @@ import (
 )
 
 func main() {
+	v := make(chan bool, 1)
+	v = nil
+	if v != nil {
+		close(v)
+	}
+	return
 	//a := []int{1, 2, 3, 4, 5, 6, 7}
 	m := make(map[int]chan int)
 	for i := 1; i < 1000; i++ {
