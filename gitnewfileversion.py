@@ -23,7 +23,7 @@ def changefile(dstdir,dstfile,dic):
 	for dstline in dstlines:
 		tmp = dstline
 		for k , v in dic.iteritems():
-			tmp = tmp.replace(k,"%s?v=%u"%(k , v))
+			tmp = tmp.replace(k,"%s?v=%s"%(k , v))
 			if tmp != dstline:
 				dstline = tmp
 		dst.write(dstline)
@@ -31,15 +31,16 @@ def changefile(dstdir,dstfile,dic):
 	dst.close()
 
 if __name__ == "__main__":
-	ret = os.system('git pull')
-	ret = os.system('git commit . -m "make version"')
-	ret = os.system('git push')
+	#ret = os.system('git pull')
+	#ret = os.system('git add .')
+	#ret = os.system('git commit . -m "make version"')
+	#ret = os.system('git push')
 	ret = os.popen('git log --name-only --pretty=format:"%ad" --date=raw')
 	ret = ret.read()
 	ret = ret.replace(' +0800','')
 	commits = ret.split('\n')
 	time = 0
-	rssdict = {}
+	rsdict = {}
 	jsdict = {}
 	jsondict = {}
 	for commit in commits:
@@ -49,16 +50,16 @@ if __name__ == "__main__":
 			if commit == "":
 				time = 0
 			elif re.search(".js$",commit) != None:
-				if jsict.has_key(commit) == False:
-					jsict[commit]=time
+				if jsdict.has_key(commit) == False:
+					jsdict[commit]=time
 					print commit+"."+time
 			elif re.search(".json$",commit) != None:
-				if jsonict.has_key(commit) == False:
-					jsonict[commit]=time
+				if jsondict.has_key(commit) == False:
+					jsondict[commit]=time
 					print commit+"."+time
 			else:
-				if rsonict.has_key(commit) == False:
-					rsonict[commit]=time
+				if rsdict.has_key(commit) == False:
+					rsdict[commit]=time
 					print commit+"."+time
 	changefile("./","index.html",jsdict)
 
