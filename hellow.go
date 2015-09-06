@@ -59,6 +59,8 @@ func parseGatewayTaskNullGateCmd(v interface{}) bool {
 	return true
 }
 func main() {
+	inData := []byte(`ddd`)
+	fmt.Println(inData[0:])
 	st := &Struct{}
 	parseGatewayTaskNullGateCmd(st)
 	TestStruct(st)

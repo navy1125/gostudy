@@ -1,6 +1,9 @@
 package main
+
 import (
-	l "container/list"
+	"bytes"
+	"container/list"
+	"encoding/binary"
 	"fmt"
 	"time"
 )
@@ -9,26 +12,55 @@ var (
 	name = "viney"
 )
 
-func list() {
-	names := l.New()
+func listTest() {
+	names := list.New()
 	t := time.Now()
 	for i := 1; i <= 1000000; i++ {
-		_ = names.PushFront(name)
+		_ = names.PushBack(name)
+	}
+	names.Init()
+	for i := 1; i <= 1000000; i++ {
+		_ = names.PushBack(name)
 	}
 	fmt.Println("list: " + time.Now().Sub(t).String())
 }
 
 func slice() {
-	names := []string{}
+	//names := []string{}
+	//names := make([]string, 0, 1000000)
+	var names []string
 	t := time.Now()
+	for i := 1; i <= 1000000; i++ {
+		names = append(names, name)
+	}
+	for name := range names[0:10] {
+		names = append(names, names[0])
+		fmt.Println(name)
+	}
+	names = names[0:0]
 	for i := 1; i <= 1000000; i++ {
 		names = append(names, name)
 	}
 	fmt.Println("slice: " + time.Now().Sub(t).String())
 }
-
-func main() {
-	list()
-	slice()
+func sendDataList(datalist *list.List) {
+	sendbuf := bytes.NewBuffer(nil)
+	binary.Write(sendbuf, binary.LittleEndian, []byte("["))
+	for e := datalist.Front(); e != nil; e = e.Next() {
+		binary.Write(sendbuf, binary.LittleEndian, e.Value)
+		binary.Write(sendbuf, binary.LittleEndian, []byte(","))
+	}
+	binary.Write(sendbuf, binary.LittleEndian, []byte("]"))
+	fmt.Println(string(sendbuf.Bytes()))
 }
 
+func main() {
+	listTest()
+	slice()
+	l := list.New()
+	l.PushBack([]byte(`{}`))
+	l.PushBack([]byte(`{}`))
+	l.PushBack([]byte(`{}`))
+	l.PushBack([]byte(`{}`))
+	sendDataList(l)
+}

@@ -42,6 +42,9 @@ func main() {
 	//b, _ := sjs2.MarshalJSON()
 	fmt.Println(sjs.Get("sjs2").Get("cur").Int())
 	test()
+	sjs, _ = sjson.NewJson([]byte(`[{"do":"register-auto", "gameid":301, "data":{"mid":"-24912448"}},{"do":"register-auto", "gameid":301, "data":{"mid":"-24912448"}}]`))
+	d, _ := sjs.GetIndex(0).MarshalJSON()
+	fmt.Println(string(d))
 }
 func test(args ...string) {
 	switch len(args) {
