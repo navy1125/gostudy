@@ -48,11 +48,11 @@ if __name__ == "__main__":
 		else:
 			if commit == "":
 				time = 0
-			elif re.search(".js$",file) != None:
+			elif re.search(".js$",commit) != None:
 				if jsict.has_key(commit) == False:
 					jsict[commit]=time
 					print commit+"."+time
-			elif re.search(".json$",file) != None:
+			elif re.search(".json$",commit) != None:
 				if jsonict.has_key(commit) == False:
 					jsonict[commit]=time
 					print commit+"."+time
