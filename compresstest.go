@@ -18,12 +18,12 @@ func main() {
 	dict := []byte(``)
 	//inData := []byte(`{"do":"plat-token-login","data":{"gameid":170,"platinfo":{"account":"10722","platid":"67","email":"whj@whj.whj","gender":"male","nickname":"navy1125","timestamp":"12345","uid":"10722","sign":"%s"}}}{"do":"plat-token-login","data":{"gameid":170,"platinfo":{"account":"10722","platid":"67","email":"whj@whj.whj","gender":"male","nickname":"navy1125","timestamp":"12345","uid":"10722","sign":"%s"}}}{"do":"plat-token-login","data":{"gameid":170,"platinfo":{"account":"10722","platid":"67","email":"whj@whj.whj","gender":"male","nickname":"navy1125","timestamp":"12345","uid":"10722","sign":"%s"}}}{"do":"plat-token-login","data":{"gameid":170,"platinfo":{"account":"10722","platid":"67","email":"whj@whj.whj","gender":"male","nickname":"navy1125","timestamp":"12345","uid":"10722","sign":"%s"}}}`)
 	//inData := []byte(`{"do":"request-zone-list","data":{"gameid":170},"gameid":170}`)
-	inData := []byte(`ddddd`)
+	inData := []byte(`王海军`)
 	compressedData := new(bytes.Buffer)
 	//compress(inData, compressedData, 9)
 	compressdict(inData, compressedData, 9, dict)
 
-	data, _ := Compress(CompressType_Gzip, inData)
+	data, _ := Compress(CompressType_Flate, inData)
 	fmt.Println("commpress len:", len(inData), compressedData.Len(), len(data))
 	fmt.Println(fmt.Sprintf("%o", data))
 	fmt.Println(fmt.Sprintf("%s", string(data)))
@@ -35,7 +35,7 @@ func main() {
 	//decompress(compressedData, deCompressedData)
 	decompressdict(compressedData, deCompressedData, dict)
 	fmt.Println(deCompressedData)
-	outdata, _ := Decompress(CompressType_Gzip, data)
+	outdata, _ := Decompress(CompressType_Flate, data)
 	//fmt.Println(deCompressedData)
 	fmt.Println(string(outdata))
 

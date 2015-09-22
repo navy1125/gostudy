@@ -42,24 +42,30 @@ if __name__ == "__main__":
 	time = 0
 	rsdict = {}
 	jsdict = {}
-	jsondict = {}
 	for commit in commits:
 		if time == 0:
 			time = commit
 		else:
 			if commit == "":
 				time = 0
-			elif re.search(".js$",commit) != None:
-				if jsdict.has_key(commit) == False:
-					jsdict[commit]=time
-					print commit+"."+time
-			elif re.search(".json$",commit) != None:
-				if jsondict.has_key(commit) == False:
-					jsondict[commit]=time
-					print commit+"."+time
 			else:
+				if re.search(".js$",commit) != None:
+					if jsdict.has_key(commit) == False:
+						jsdict[commit]=time
+						print commit+"."+time
 				if rsdict.has_key(commit) == False:
 					rsdict[commit]=time
 					print commit+"."+time
 	changefile("./","index.html",jsdict)
+	changefile("resource/","resource.json",rsdict)
+	src = open("resource/resource.json")
+	srclines = src.readlines()
+	src.close()
+	for srcline in srclines:
+		if srcline.find('.json"') != -1 and srcline.find('"url":"assets') != -1 :
+			srcline = srcline.replace('"url":"','')
+			srcline = srcline.replace('"','')
+			rfile = srcline.strip()
+			print rfile
+			changefile("resource",rfile,rsdict)
 

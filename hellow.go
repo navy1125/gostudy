@@ -59,6 +59,20 @@ func parseGatewayTaskNullGateCmd(v interface{}) bool {
 	return true
 }
 func main() {
+	if 3 > 2 || 1 == 2 && 2 > 3 {
+		fmt.Println("whjwhjwhjwhwjhw")
+	}
+	i := 0
+	for ; i < 100; i++ {
+	loop:
+		fmt.Println(i)
+		if i < 100 {
+			i = 200
+			goto loop
+		}
+		fmt.Println("bbbb")
+	}
+	fmt.Println(i)
 	inData := []byte(`ddd`)
 	fmt.Println(inData[0:])
 	st := &Struct{}

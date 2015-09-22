@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"github.com/stevedonovan/luar"
+	"reflect"
+	"strings"
 )
 
 const test = `
@@ -14,6 +16,10 @@ end
 type MyStruct struct {
 	Name string
 	Age  int
+}
+
+func TestCall(v interface{}) {
+	fmt.Println("aaaaaaaaaaaaaaaaaaaaaaa", reflect.TypeOf(v))
 }
 
 const code = `
@@ -29,9 +35,13 @@ for i,v in ipairs(S) do
 end
 ST.Name="dddddddddddddd"
 Print(ST.Name)
+testcall({a=1,b=2})
 `
 
 func main() {
+	whj := "wang::hai::jun"
+	fmt.Println(strings.Split(whj, "::"))
+	TestCall("111")
 	L := luar.Init()
 	defer L.Close()
 	M := luar.Map{
@@ -45,16 +55,17 @@ func main() {
 	ST := &MyStruct{"Dolly", 46}
 
 	luar.Register(L, "", luar.Map{
-		"Print": fmt.Println,
-		"print": fmt.Println,
-		"MSG":   "hello", // can also register constants
-		"M":     M,
-		"S":     S,
-		"ST":    ST,
+		"Print":    fmt.Println,
+		"testcall": TestCall,
+		"print":    fmt.Println,
+		"MSG":      "hello", // can also register constants
+		"M":        M,
+		"S":        S,
+		"ST":       ST,
 	})
 
 	//L.DoString(test)
-	//L.DoString(code)
+	L.DoString(code)
 	L.GetGlobal("print")
 	print := luar.NewLuaObject(L, -1)
 	print.Call("one two", 12)

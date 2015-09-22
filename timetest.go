@@ -1,12 +1,53 @@
 package main
 
 import (
+	"errors"
 	"fmt"
+	"git.code4.in/mobilegameserver/unibase"
+	"net"
 	"os"
+	"strings"
 	"time"
 )
 
+func ParseTime(datetime string) (time.Time, error) {
+	dt := strings.Split(datetime, " ")
+	if len(dt) != 2 {
+		return time.Time{}, errors.New("format datetime err")
+	}
+	ds := strings.Split(dt[0], "-")
+	if len(ds) != 3 {
+		return time.Time{}, errors.New("format date string err")
+	}
+	ts := strings.Split(dt[1], ":")
+	if len(ts) != 3 {
+		return time.Time{}, errors.New("format time string err")
+	}
+	year := unibase.Atoi(ds[0])
+	month := unibase.Atoi(ds[1])
+	day := unibase.Atoi(ds[2])
+	hour := unibase.Atoi(ts[0])
+	min := unibase.Atoi(ts[1])
+	sec := unibase.Atoi(ts[2])
+	return time.Date(year, time.Month(month), day, hour, min, sec, 0, time.Now().Location()), nil
+}
+
 func main() {
+	fmt.Println(int(time.Millisecond), int(time.Millisecond.Nanoseconds()))
+	year, month, day := time.Now().Date()
+	fmt.Println(year, month, day)
+	ip := net.ParseIP("1.1.1.11").To4()
+	fmt.Println(uint32(ip[0])<<24 + uint32(ip[1])<<16)
+	loc, _ := time.LoadLocation("")
+	fmt.Println(time.Now().Unix(), time.Now().Local().Unix(), time.Now().Second(), time.Now().Location().String(), loc.String())
+	pt, err := ParseTime("2012-12-12 12:12:12")
+	fmt.Println(pt.Unix(), err)
+	now := time.Now()
+	_, offset := now.Zone()
+	fmt.Println(int(time.Duration(offset)))
+	begin := time.Duration(offset) * time.Second
+	zonenow := now.Add(-begin)
+	fmt.Println(now.Unix(), zonenow.Unix())
 	fmt.Println("GOTRACEBACK:", os.Getenv("RACEBACK"))
 	//now := time.Now()
 	//time.Sleep(1000000000)

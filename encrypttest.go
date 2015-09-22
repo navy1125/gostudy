@@ -12,6 +12,7 @@ func main() {
 	//inData := []byte(`{"do":"plat-token-login","data":{"gameid":170,"platinfo":{"account":"10722","platid":"67","email":"whj@whj.whj","gender":"male","nickname":"navy1125","timestamp":"12345","uid":"10722","sign":"%s"}}}{"do":"plat-token-login","data":{"gameid":170,"platinfo":{"account":"10722","platid":"67","email":"whj@whj.whj","gender":"male","nickname":"navy1125","timestamp":"12345","uid":"10722","sign":"%s"}}}{"do":"plat-token-login","data":{"gameid":170,"platinfo":{"account":"10722","platid":"67","email":"whj@whj.whj","gender":"male","nickname":"navy1125","timestamp":"12345","uid":"10722","sign":"%s"}}}{"do":"plat-token-login","data":{"gameid":170,"platinfo":{"account":"10722","platid":"67","email":"whj@whj.whj","gender":"male","nickname":"navy1125","timestamp":"12345","uid":"10722","sign":"%s"}}}`)
 	//key1 := []byte("1234567890abcdef")
 	key1 := []byte("12345678")
+	//inData := []byte(`{"do":"request-zone-list","data":{"gameid":170},"gameid":170}`)
 	inData := []byte(`{"do":"request-zone-list","data":{"gameid":170},"gameid":170}`)
 	block, err := des.NewCipher(key1)
 	if err != nil {
@@ -36,13 +37,17 @@ func main() {
 	}
 	fmt.Println(string(inData))
 
-	key := []byte("example key 1234")
+	key := []byte("1234567890abcdef")
 	ciphertext, _ := hex.DecodeString("f363f3ccdcb12bb883abf484ba77d9cd7d32b5baecb3d4b1b3e0e4beffdb3ded")
 
 	block, err = aes.NewCipher(key)
 	if err != nil {
 		panic(err)
 	}
+	block.Encrypt(inData, inData)
+	fmt.Println(string(inData))
+	block.Decrypt(inData, inData)
+	fmt.Println(string(inData))
 
 	// The IV needs to be unique, but not secure. Therefore it's common to
 	// include it at the beginning of the ciphertext.

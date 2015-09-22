@@ -2,15 +2,75 @@ package main
 
 import (
 	"fmt"
+	"reflect"
 	"runtime"
 	"time"
 )
 
+func CheckChan() {
+	v := make(chan bool, 5)
+	v2 := make(chan bool, 5)
+	v <- true
+	v <- true
+	v <- true
+	v <- true
+	v <- true
+	//v = append(v, false)
+	if true {
+
+		defer func() {
+			if x := recover(); x != nil {
+				fmt.Println(x)
+				fmt.Println(reflect.TypeOf(x))
+			}
+		}()
+	}
+
+	l := len(v)
+	fmt.Println("ccccccccccccc", l, cap(v))
+	for i := 0; i < l; i++ {
+		switch i {
+		case 1:
+			fmt.Println("xxxxxxx")
+			break
+		}
+		fmt.Println("xxxxxxx")
+		v2 <- <-v
+		if r, ok := <-v2; ok == true {
+			fmt.Println("ccccccccccccc", r)
+		}
+	}
+	close(v)
+	if r, ok := <-v; ok == false {
+		fmt.Println("bbbbbbbbbbbbbbbbbbbbbbb", r)
+		close(v)
+	}
+	for b := range v {
+		fmt.Println(b)
+	}
+}
+
 func main() {
+	str := fmt.Sprintf(`'%%sddd'`)
+	fmt.Println(fmt.Sprintf("%s", str))
+	return
+	ints := []int{}
+	ints = append(ints, 1)
+	ints = append(ints, 2)
+	ints = append(ints, 3)
+	ints = append(ints, ints...)
+	for v := range ints {
+		fmt.Println(v)
+	}
+	fmt.Println(ints)
+	CheckChan()
 	v := make(chan bool, 1)
-	v = nil
+	v <- true
 	if v != nil {
 		close(v)
+	}
+	for b := range v {
+		fmt.Println(b)
 	}
 	return
 	//a := []int{1, 2, 3, 4, 5, 6, 7}
