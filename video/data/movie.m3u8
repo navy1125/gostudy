@@ -1,0 +1,8 @@
+#EXTM3U
+#EXT-X-TARGETDURATION:30
+#EXT-X-VERSION:3
+#EXTINF:5.467,
+http://127.0.0.1:12345/video/data/id2
+#EXTINF:9.267,
+http://127.0.0.1:12345/video/data/id3
+#EXT-X-ENDLIST

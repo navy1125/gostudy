@@ -18,7 +18,8 @@ func main() {
 	//redis_handle := redis.New("tcp:112.65.197.72:6379", 0, "")
 	//log.Fatal(http.ListenAndServe(":8080", http.FileServer(http.Dir("D:\\work\\gostudy"))))
 	//http.Handle("/gostudy/", http.StripPrefix("/gostudy/", http.FileServer(http.Dir("D:\\work\\gostudy"))))
-	http.Handle("/", http.FileServer(http.Dir("e:\\tmp")))
+	http.Handle("/movie/", http.StripPrefix("/movie/", http.FileServer(http.Dir("/Users/whj/Downloads/Downloads/"))))
+	http.Handle("/video/", http.StripPrefix("/video/", http.FileServer(http.Dir("/Users/whj/gostudy/"))))
 	sm1 := http.NewServeMux()
 	sm2 := http.NewServeMux()
 	sm1.HandleFunc("/", hf1)
@@ -29,7 +30,8 @@ func main() {
 	http.HandleFunc("/game", game)
 	http.HandleFunc("/fxsj-zh", newUserCard)
 	http.HandleFunc("/testlua", testLua)
-	log.Fatal(http.ListenAndServe("112.65.197.72:8083", nil))
+	//log.Fatal(http.ListenAndServe("112.65.197.72:8083", nil))
+	log.Fatal(http.ListenAndServe("127.0.0.1:12345", nil))
 }
 
 func hf1(w http.ResponseWriter, r *http.Request) {
