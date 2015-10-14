@@ -33,6 +33,8 @@ func ParseTime(datetime string) (time.Time, error) {
 }
 
 func main() {
+	d, e := time.ParseDuration("1s")
+	fmt.Println(d, e)
 	fmt.Println(int(time.Millisecond), int(time.Millisecond.Nanoseconds()))
 	year, month, day := time.Now().Date()
 	fmt.Println(year, month, day)
