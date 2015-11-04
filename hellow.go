@@ -59,6 +59,10 @@ func parseGatewayTaskNullGateCmd(v interface{}) bool {
 	return true
 }
 func main() {
+	whj := "whjwhjwhjwhwjhw"
+	if whj[0:1] == "w" {
+		fmt.Println(whj[1:])
+	}
 	if 3 > 2 || 1 == 2 && 2 > 3 {
 		fmt.Println("whjwhjwhjwhwjhw")
 	}
