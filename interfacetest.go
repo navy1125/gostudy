@@ -4,9 +4,40 @@ import (
 	"fmt"
 	"reflect"
 	"runtime"
+	"time"
 )
 
+type Interface interface {
+	String() string
+}
+type StructInterface struct {
+}
+
+func (self *StructInterface) String() string {
+	return "aaaa"
+}
+
 func main() {
+	st := &StructInterface{}
+	var it Interface
+	it = st
+	begin := time.Now().UnixNano()
+	fmt.Println("begin:", begin)
+	for i := 0; i < 1000000000; i++ {
+		if ss := st; ss != nil {
+			ss.String()
+		}
+	}
+	fmt.Println("end:", time.Now().UnixNano()-begin)
+	begin = time.Now().UnixNano()
+	fmt.Println("begin:", begin)
+	for i := 0; i < 1000000000; i++ {
+		//if ss, _ := it.(*StructInterface); ss != nil {
+		if ss, _ := it.(*StructInterface); ss != nil {
+			ss.String()
+		}
+	}
+	fmt.Println("end:", time.Now().UnixNano()-begin)
 	var i interface{}
 	a := 5
 	i = a
@@ -23,7 +54,7 @@ func main() {
 	vv := reflect.New(t)
 	v := reflect.ValueOf(i)
 	fmt.Println("tyep:", v.Type())
-	fmt.Println("type nil:", t,vv)
+	fmt.Println("type nil:", t, vv)
 	go Say("World")
 	Say("Hellow")
 

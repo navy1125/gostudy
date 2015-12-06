@@ -5,7 +5,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"net"
-	"reflect"
+	//"reflect"
 	"time"
 )
 
@@ -18,6 +18,14 @@ func TestParm(i int) {
 }
 
 func main() {
+	whj := "wanghaijun"
+	bb := [32]byte{}
+	copy(bb[:len(whj)], []byte(whj))
+	//b[:len(whj)] = []byte(whj)
+	//bbuf := bytes.NewBuffer(b)
+	//bbuf.Write([]byte(whj))
+	fmt.Println(bb)
+
 	//test := &TestStruct{1}
 	conn := &net.TCPConn{}
 	var pi float64
@@ -51,5 +59,5 @@ func main() {
 		conn.Write(cb)
 		time.Sleep(time.Second)
 	}
-	fmt.Println(reflect.TypeOf().Size())
+	//fmt.Println(reflect.TypeOf().Size())
 }
