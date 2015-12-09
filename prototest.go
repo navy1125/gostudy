@@ -15,8 +15,10 @@ func main() {
 	cmd4 := &Pmd.RequestCloseNullUserPmd_CS{}
 	cmd3.Reason = proto.String("2222")
 	//nmd.Prototype = proto.Uint64(2)
-	//nmd.ByCmd = proto.Uint32(0)
-	//nmd.ByParam = proto.Uint32(0)
+	nmd.ByCmd = proto.Uint32(0)
+	nmd.ByParam = proto.Uint32(0)
+	//nmd.ByCmd = append(nmd.ByCmd, 0)
+	//nmd.ByParam = append(nmd.ByParam, 0)
 	sendbuf := proto.NewBuffer(nil)
 	err := sendbuf.Marshal(nmd)
 	if err != nil {
