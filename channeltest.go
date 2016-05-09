@@ -53,6 +53,12 @@ func CheckChan() {
 func main() {
 	str := fmt.Sprintf(`'%%sddd'`)
 	fmt.Println(fmt.Sprintf("%s", str))
+	m1 := make(map[chan []byte]bool)
+	for i := 1; i < 1000000; i++ {
+		ch := make(chan []byte, 128)
+		m1[ch] = false
+	}
+	time.Sleep(time.Second * 100)
 	return
 	ints := []int{}
 	ints = append(ints, 1)

@@ -32,7 +32,22 @@ func ParseTime(datetime string) (time.Time, error) {
 	return time.Date(year, time.Month(month), day, hour, min, sec, 0, time.Now().Location()), nil
 }
 
+type Test struct {
+	offset int
+}
+
+func (self *Test) Add() int {
+	self.offset += 1
+	return self.offset
+}
+
 func main() {
+	tt := &Test{}
+	fmt.Println(tt.offset)
+	fmt.Println(tt.Add())
+	fmt.Println(tt.offset)
+	return
+	fmt.Println(unibase.Atoi("192.158.68.2"))
 	d, e := time.ParseDuration("1s")
 	fmt.Println(d, e)
 	fmt.Println(int(time.Millisecond), int(time.Millisecond.Nanoseconds()))

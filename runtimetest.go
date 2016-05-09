@@ -30,6 +30,7 @@ func RoundPos(dep int32, cb func(r, x, y int32)) {
 	}
 }
 func main() {
+	fmt.Println("aaaa:", runtime.NumCPU())
 	select {
 	case <-time.After(time.Second):
 		fmt.Println(time.Minute.Seconds(), time.Second)

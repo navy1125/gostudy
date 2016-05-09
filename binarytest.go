@@ -18,7 +18,14 @@ func TestParm(i int) {
 }
 
 func main() {
+	wb := make([]byte, 0, 1024)
+	fmt.Println(len(wb))
 	whj := "wanghaijun"
+	wb = []byte(whj)
+	fmt.Println(wb)
+	copy(wb, wb[3:])
+	fmt.Println(wb)
+	fmt.Println([]byte(whj)[10:])
 	bb := [32]byte{}
 	copy(bb[:len(whj)], []byte(whj))
 	//b[:len(whj)] = []byte(whj)

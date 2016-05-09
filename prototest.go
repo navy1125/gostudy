@@ -8,6 +8,8 @@ import (
 )
 
 func main() {
+	var b []byte
+	fmt.Println(len(b))
 	nmd := &Pmd.ForwardNullUserPmd_CS{}
 	nmd1 := &Pmd.ForwardNullUserPmd_CS{}
 	nmd2 := &Pmd.ForwardNullUserPmd_CS{}
@@ -16,7 +18,7 @@ func main() {
 	cmd3.Reason = proto.String("2222")
 	//nmd.Prototype = proto.Uint64(2)
 	nmd.ByCmd = proto.Uint32(0)
-	nmd.ByParam = proto.Uint32(0)
+	//nmd.ByParam = proto.Uint32(0)
 	//nmd.ByCmd = append(nmd.ByCmd, 0)
 	//nmd.ByParam = append(nmd.ByParam, 0)
 	sendbuf := proto.NewBuffer(nil)
@@ -24,6 +26,7 @@ func main() {
 	if err != nil {
 		fmt.Println("1", err)
 	}
+	nmd.Data = sendbuf.Bytes()
 	fmt.Println(nmd, proto.Size(nmd), len(sendbuf.Bytes()))
 	fmt.Println(len(sendbuf.Bytes()), sendbuf.Bytes())
 	//data := sendbuf.Bytes()

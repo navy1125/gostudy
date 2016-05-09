@@ -20,4 +20,7 @@ func main() {
 	if err == nil {
 		fmt.Println(ips)
 	}
+	//ip, err := net.ResolveIPAddr("ip", "localhost")
+	ip, err := net.ResolveIPAddr("ip", "www.baidu.com")
+	fmt.Println(ip)
 }
