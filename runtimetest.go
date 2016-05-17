@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"runtime"
 	"runtime/debug"
+	"strings"
 	"time"
 )
 
@@ -29,7 +30,31 @@ func RoundPos(dep int32, cb func(r, x, y int32)) {
 		}
 	}
 }
+
+type Test struct {
+	x    int
+	next interface{}
+}
+
+func (self *Test) Func() {
+	fname, _, _, _ := runtime.Caller(0)
+	f := runtime.FuncForPC(fname)
+	fmt.Println(f.Name())
+}
+
 func main() {
+	test1 := Test{}
+	test1.next = &Test{x: 2}
+	test1.x = 1
+	test1.Func()
+	fmt.Println("aaaa", reflect.TypeOf(test1).String(), len(strings.Split("aaa", "3")))
+	fmt.Println("bbbb", reflect.TypeOf(test1).Name())
+	//reflect.ValueOf(test1).FieldByName("x").SetInt(111)
+	fmt.Println(reflect.ValueOf(test1).FieldByName("next").Elem().Elem().FieldByName("x"))
+	//fmt.Println(((interface{})(reflect.ValueOf(test1).FieldByName("next").Elem().Pointer())).(*Test))
+	//fmt.Println(((*Test)((interface{})(reflect.ValueOf(test1).FieldByName("next").Elem().Pointer()))))
+	//fmt.Println(reflect.ValueOf(test1).FieldByName("next").Convert(reflect.TypeOf(test1)).Elem().FieldByName("x"))
+	//fmt.Println(fmt.Sprintf("aaaa:%d", reflect.ValueOf(test1).FieldByName("next").Elem().FieldByName("x").Int()))
 	fmt.Println("aaaa:", runtime.NumCPU())
 	select {
 	case <-time.After(time.Second):

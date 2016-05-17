@@ -5,9 +5,13 @@ import (
 	"git.code4.in/mobilegameserver/platcommon"
 
 	"fmt"
+	"reflect"
 )
 
 func main() {
+	mset := make(map[int32]proto.Extension)
+	//mset[1] = proto.Extension{enc: []byte("sss")}
+	//umset, err := proto.MarshalMessageSet(mset)
 	var b []byte
 	fmt.Println(len(b))
 	nmd := &Pmd.ForwardNullUserPmd_CS{}
@@ -16,6 +20,16 @@ func main() {
 	cmd3 := &Pmd.RequestCloseNullUserPmd_CS{}
 	cmd4 := &Pmd.RequestCloseNullUserPmd_CS{}
 	cmd3.Reason = proto.String("2222")
+	fmt.Println(proto.GetProperties(reflect.TypeOf(cmd3).Elem()))
+	cmd3byte, err1 := proto.Marshal(cmd3)
+	if err1 != nil {
+		fmt.Println("xxxxxxxxxxx", err1)
+	}
+	fmt.Println(proto.Unmarshal(cmd3byte, cmd3))
+	fmt.Println(mset)
+	cmd3test := proto.MarshalTextString(cmd3)
+	fmt.Println(cmd3test)
+	fmt.Println(proto.UnmarshalText(cmd3test, nmd))
 	//nmd.Prototype = proto.Uint64(2)
 	nmd.ByCmd = proto.Uint32(0)
 	//nmd.ByParam = proto.Uint32(0)

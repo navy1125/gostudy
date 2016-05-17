@@ -1,0 +1,332 @@
+package Pmd;
+
+message Login
+{
+	enum Param
+	{
+		AccountTokenVerifyLoginUserPmd_CS 		= 1;
+		AccountTokenVerifyReturnLoginUserPmd_S	= 2;
+		ZoneInfoListLoginUserPmd_S				= 3;
+		UserLoginRequestLoginUserPmd_C 			= 4;
+		UserLoginReturnFailLoginUserPmd_S 		= 5;
+		UserLoginReturnOkLoginUserPmd_S 		= 6;
+		UserLoginTokenLoginUserPmd_C 			= 7;
+		ClientLogUrlLoginUserPmd_S 				= 8;
+		MessageBoxLoginUserPmd_S				= 9;
+		RequestAccountRegisterLoginUserPmd_C	= 10;
+		ReturnAccountRegisterLoginUserPmd_S		= 11;
+		UserLogoutTokenLoginUserPmd_C 			= 12;
+		UserLoginReconnectLoginUserPmd_C 		= 13;
+		ReconnectKickoutLoginUserPmd_S 			= 14;
+		ServerKickoutLoginUserPmd_S 			= 15;
+		RequestZoneInfoListLoginUserPmd_C		= 16;
+		SetServerLangLoginUserPmd_C				= 17;
+		RequestClientIPLoginUserPmd_C			= 18;
+		ReturnClientIPLoginUserPmd_S			= 19;
+		ReconnectErrorLoginUserPmd_S 			= 20;
+		CheckVersionLoginUserPmd_C 				= 21;
+		PushAccountVerifyLoginUserPmd_C 		= 22;
+		BehaviorClientVerifyLoginUserPmd_C 		= 23;
+		RequestUserZoneInfoLoginUserPmd_C       = 24;
+		RequestUserZoneInfoLoginUserPmd_S       = 25;
+	}
+}
+
+// 客户端发给登陆服务器的登陆验证消息
+message AccountTokenVerifyLoginUserPmd_CS
+{
+	required string account 	 	= 1;	// 平台账号
+	required string token 		 	= 2;	// token 可以是第三方认证
+	required uint32 version 		= 3;	// 当前客户端login版本号Version_Login
+	optional uint32 gameid			= 4;	// if filled, will send ZoneInfoListLoginUserPmd_S for select, else auto select zone
+	optional string mid				= 5;	// 机器码
+	optional uint32 platid 			= 6;	// 平台编号
+	optional uint32 zoneid			= 7;	// if filled, will auto login UserLoginRequestLoginUserPmd_C, UserLoginTokenLoginSmd_SC
+	optional uint32 gameversion 	= 8;	// 当前客户端game版本号Version_Login
+	optional string compress		= 9;	// 压缩算法
+	optional string encrypt			= 10;	// 加密算法
+	optional string encryptkey		= 11;	// 加密key
+}
+
+// 推送客户端连接上来的认证信息,简单验证,主要用来分配网关
+message PushAccountVerifyLoginUserPmd_C
+{
+	optional uint64 accid			= 1;	// accid
+	optional string account 	 	= 2;	// 账号id
+	optional uint32 zoneid			= 3;	// 这里约定为每个游戏的gameid,这个消息本身的gameid为4000,约定为推送服务器
+	optional string token 		 	= 4;	// token 默认约定即可(暂时不用)
+	optional uint32 version 		= 5;	// 当前客户端login版本号Version_Login(暂时不用)
+	optional string mid				= 6;	// 机器码
+	optional uint32 gameversion 	= 7;	// 当前客户端game版本号Version_Login(暂时不用)
+	optional string compress		= 8;	// 压缩算法(暂时不用)
+	optional string encrypt			= 9;	// 加密算法(暂时不用)
+	optional string encryptkey		= 10;	// 加密key(暂时不用)
+}
+
+enum VerifyReturnReason
+{
+	LoginOk				= 0;				// 登陆成功
+	TokenFindError		= 1;				// 服务器没有token
+	TokenDiffError 		= 2;				// token错误
+	VersionError 		= 3;				// 版本验证
+}
+
+// 登陆服务器返回给客户端的认证结果
+message AccountTokenVerifyReturnLoginUserPmd_S
+{
+
+	required VerifyReturnReason retcode 	= 1; // 返回值
+	optional string desc	 				= 2; // 返回错误描述,正确时不填
+}
+
+// 区服务器状态
+enum ZoneState
+{
+	Shutdown 	= 0;						// 关闭状态ZoneState_Shutdown
+	Normal 		= 1;						// 正常运行ZoneState_Normal
+	Fullly 		= 2;						// 爆满ZoneState_Fullly
+	Starting	= 3;						// 正在启动ZoneState_Starting
+}
+
+// 区服务器信息
+message ZoneInfo
+{
+	required uint32 zoneid	 	= 1;		// 区编号
+	required string zonename 	= 2;		// 区名称
+	optional ZoneState state 	= 3;
+    optional string opentime    = 4;
+}
+
+// 区服务器信息列表,选区列表
+message ZoneInfoListLoginUserPmd_S
+{
+	optional string gamename		= 1;	// 游戏名称,(区别与区名)
+	required uint32 gameid	 		= 2;	// 游戏编号
+	repeated ZoneInfo zonelist 		= 3;
+}
+
+// 请求区服务器信息列表,选区列表
+message RequestZoneInfoListLoginUserPmd_C
+{
+	required uint32 gameid	 		= 1;	// 游戏编号
+}
+
+// 请求玩有在所有区的角色信息，及区在线信息
+message RequestUserZoneInfoLoginUserPmd_C
+{
+	required uint32 gameid	 		= 1;	// 游戏编号
+}
+
+message UserZoneInfo
+{
+	required string charname    = 1; // 角色信息，如果为“”说明在这个区里没有角色
+	required ZoneInfo zoneinfo  = 2; // zoneinfo
+	required uint32   onlinenum = 3; // 在线人数
+}
+
+message RequestUserZoneInfoLoginUserPmd_S
+{
+	repeated UserZoneInfo userzoneinfo = 1; // 玩家在各个区里的角色信息及区在线信息
+}
+
+// 请求登陆某个区,发给LoginServer
+message UserLoginRequestLoginUserPmd_C
+{
+	required uint32 gameid	 	= 1;		// 游戏编号
+	required uint32 zoneid	 	= 2;		// 区编号
+	required uint32 gameversion	= 3;		// 客户端游戏版本号Version_Game
+	optional string mid			= 4;		// 机器码
+}
+
+enum LoginReturnFailReason
+{
+	Password 			= 1;				// 密码错误
+	ServerShutdown 		= 2;				// 区服务器已关闭
+	VersionTooLow 		= 3;				// 客户端游戏版本号太低
+	UserTokenFind 		= 4;				// 没有找到登陆token,需要重新平台验证
+	UserTokenTempId		= 5;				// token错误
+	UserTokenTimeOut	= 6;				// token已过期
+	LoginDulicate		= 7;				// 重复登陆
+	NoGatewaytDown 		= 8;				// 没有可用网关
+	AccountUsing 		= 9;				// 账号正在使用中
+}
+
+// 登陆某个区的错误返回,LoginServer返回
+message UserLoginReturnFailLoginUserPmd_S
+{
+
+	required LoginReturnFailReason retcode 	= 1;
+	required string desc	 				= 2; // 错误描述
+}
+// 登陆某个区正确时的返回,LoginServer返回
+message UserLoginReturnOkLoginUserPmd_S
+{
+	required uint64 accountid 		= 1;	// 账号
+	required uint64 logintempid 	= 2;	// 生成一个临时编号,用于校验,登陆网关时传上去
+	required uint64 tokenid			= 3;	// 随机token
+	required string gatewayurl		= 4;	// 登陆的网关地址,接下来断开连接后马上登陆这个地址
+	required uint32 gameid	 		= 5;	// 游戏编号
+	required uint32 zoneid	 		= 6;	// 区编号
+	optional bool   separatezoneuid = 7;
+	optional string zoneuid         = 8;
+}
+// 发给网关的登陆消息
+message UserLoginTokenLoginUserPmd_C
+{
+	required uint32 gameid	 		= 1;
+	required uint32 zoneid	 		= 2;
+	required uint64 accountid		= 3;
+	required uint64 logintempid 	= 4;
+	required uint32 timestamp	 	= 5;	// 客户端时间戳
+	required string tokenmd5		= 6;	// md5(string(accountid) + string(logintempid) + string(timestamp) + string(tokenid))
+	optional string compress		= 8;	// 压缩算法
+	optional string encrypt			= 9;	// 加密算法
+	optional string encryptkey		= 10;	// 加密key
+}
+// 通知客户端发送日志的地址和日志级别
+message ClientLogUrlLoginUserPmd_S
+{
+	required string loglevel		= 1;	// 日志几遍,Debug,Info,Error
+	required string logurl			= 2;	// 日志地址
+	required bool distinct			= 3;	// 相同日志信息的日志只发一遍
+}
+
+message MessageBoxLoginUserPmd_S
+{
+	optional string btnleft		= 1;
+	optional string btnmiddle	= 2;
+	optional string btnright	= 3;
+	optional string info		= 4;
+}
+// 请求注册帐号
+message RequestAccountRegisterLoginUserPmd_C
+{
+	required string account 	 	= 1;	// 账号
+	required string password 	 	= 2;	// 密码
+	optional string code			= 3;	// 验证码
+}
+// 请求注册帐号
+message ReturnAccountRegisterLoginUserPmd_S
+{
+	required string account 	 	= 1;	// 账号
+	required uint64 accountid 		= 2;	// 账号ID
+}
+// 发给网关的主动退出消息
+message UserLogoutTokenLoginUserPmd_C
+{
+}
+
+// 发给网关的断线重连消息
+message UserLoginReconnectLoginUserPmd_C
+{
+	optional uint64 accountid		= 1;
+	optional uint32 timestamp	 	= 2;	// 客户端时间戳
+	optional string tokenmd5		= 3;	// md5(string(accountid) + string(timestamp) + string(tokenkey))
+	optional uint64 logintempid		= 4;	//端游用
+}
+
+
+// 如果是重连成功需要给老的客户度发送踢下线消息，否则会永远抢下去
+message ReconnectKickoutLoginUserPmd_S
+{
+	optional string desc			= 1;	// 描述
+}
+message ReconnectErrorLoginUserPmd_S
+{
+	optional string desc			= 1;	// 描述
+}
+ 
+
+// 服务器主动踢玩家下线
+message ServerKickoutLoginUserPmd_S
+{
+	required uint64 accountid		= 1; 	// 踢下线的玩家
+	optional string desc			= 2; 	// 描述
+}
+
+// 平台用户信息
+message PlatInfo
+{
+	required string account		= 1;		// 用户账号。platid为PlatType_Normal时，account可以缺省为客户端机器码
+	required PlatType platid	= 2;		// 平台id
+	optional string email		= 3;		// email
+	optional string gender		= 4;		// 性别
+	optional string nickname	= 5;		// 昵称
+	optional string timestamp	= 6;		// 时间戳
+	optional string sign		= 8;		// 平台签名串
+	optional string	faceurl		= 10;		// 平台头像
+	optional string extdata     = 11; 		// 增加一个扩展字段，特殊平台自行组装json
+	optional string uid			= 12;		// 平台id(兼容老的处理方式)
+}
+
+// 第三方平台登录
+message ThirdPlatLoginUserPmd_C
+{
+	required PlatInfo platinfo 	=1;			// 平台用户信息
+	required uint32 gameid		=2;			// 游戏编号
+	required string sid			=3;			// 签名id
+	required string uid			=4;			// 用户ID
+}
+
+// 平台枚举
+enum PlatType
+{
+	PlatType_Normal 			= 0;		// 本平台
+	PlatType_UC 				= 4;		// UC平台
+	PlatType_LeZhuan 			= 67;		// 手上活
+	PlatType_WeChat 			= 68;		// 微信
+	PlatType_Play68 			= 69;		// play68
+	PlatType_AiBei    			= 70;		// 爱贝云
+	PlatType_Facebook    		= 71;		// Facebook
+	PlatType_GooglePlay    		= 72;		// GooglePlay
+	PlatType_XingZhiZhu 		= 73;		// 性之助（就叫这个名字）
+	PlatType_HuoWu 				= 74;		// 火舞
+	PlatType_CaiGuo 			= 77;		// 彩果
+	PlatType_1758				= 79;		// 1758
+	PlatType_DAPAI  			= 80;		// 达派手机助手
+	PlatType_HILE  				= 82;		// 嗨乐app
+	PlatType_AAY  				= 86;		// 爱爱游
+	PlatType_WEIYOU				= 90;		// 微游联盟
+	PlatType_9g					= 99;		// 万游在线
+	PlatType_XueChi				= 133;		// 雪池
+	PlatType_Egret				= 134;		// 白鹭开放平台
+	PlatType_AoXin				= 140;		// 鎏信
+}
+
+// 通知服务器所采用的编码方式和区域信息
+message SetServerLangLoginUserPmd_C
+{
+	required string lang = 1;
+	required int32 gameregion = 2;			// 游戏运营区域
+}
+
+// 客户端请求得到自己的IP
+message RequestClientIPLoginUserPmd_C
+{
+}
+
+// 返回客户端IP
+message ReturnClientIPLoginUserPmd_S
+{
+	required string pstrip = 1;
+}
+
+message CheckVersionLoginUserPmd_C
+{
+	optional uint32 default_charid = 1;		// 保留字段
+	optional uint32 version = 2;
+}
+message BehaviorClientVerifyLoginUserPmd_C
+{
+	required string account 	 	= 1;	// 平台账号
+	required string token 		 	= 2;	// token 可以是第三方认证
+	required uint32 version 		= 3;	// 当前客户端login版本号Version_Login
+	optional uint32 gameid			= 4;	// if filled, will send ZoneInfoListLoginUserPmd_S for select, else auto select zone
+	optional string mid				= 5;	// 机器码
+	optional uint32 platid 			= 6;	// 平台编号
+	optional uint32 zoneid			= 7;	// if filled, will auto login UserLoginRequestLoginUserPmd_C, UserLoginTokenLoginSmd_SC
+	optional uint32 gameversion 	= 8;	// 当前客户端game版本号Version_Login
+	optional string compress		= 9;	// 压缩算法
+	optional string encrypt			= 10;	// 加密算法
+	optional string encryptkey		= 11;	// 加密key
+}

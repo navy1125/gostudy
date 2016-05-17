@@ -1,29 +1,32 @@
 package main
-import "fmt"
-var cmap map[int]chan bool
-func fibonacci(c, quit chan int) {
-	x, y := 1, 1
+
+import (
+	"fmt"
+	"runtime"
+	"time"
+)
+
+var cmap map[int]chan int
+var count int
+
+func fibonacci(chanint chan int) {
+	ticker_sec := time.NewTicker(time.Second)
 	for {
 		select {
-		case c <- x:
-			x, y = y, x + y
-			fmt.Println(len(c))
-		case <-quit:
-			fmt.Println("quit")
-			return
-		default:
-			break
+		case <-chanint:
+		case <-ticker_sec.C:
+			fmt.Println(len(chanint), count)
 		}
 	}
 }
 func main() {
-	c := make(chan int)
-	quit := make(chan int)
+	runtime.GOMAXPROCS(4)
+	chanint := make(chan int, 10240)
 	go func() {
-		for i := 0; i < 10; i++ {
-			fmt.Println(len(c),<-c)
+		for {
+			chanint <- count
+			count++
 		}
-		quit <- 0
 	}()
-	fibonacci(c, quit)
+	fibonacci(chanint)
 }
