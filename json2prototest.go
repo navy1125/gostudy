@@ -8,21 +8,6 @@ import (
 	"code.google.com/p/goprotobuf/proto"
 )
 
-type AccountTokenVerifyLoginUserPmd struct {
-	Account          *string `protobuf:"bytes,1,req,name=account" json:"account,omitempty"`
-	Token            *string `protobuf:"bytes,2,req,name=token" json:"token,omitempty"`
-	Version          *uint32 `protobuf:"varint,3,req,name=version" json:"version,omitempty"`
-	Gameid           *uint32 `protobuf:"varint,4,opt,name=gameid" json:"gameid,omitempty"`
-	Mid              *string `protobuf:"bytes,5,opt,name=mid" json:"mid,omitempty"`
-	Platid           *uint32 `protobuf:"varint,6,opt,name=platid" json:"platid,omitempty"`
-	Zoneid           *uint32 `protobuf:"varint,7,opt,name=zoneid" json:"zoneid,omitempty"`
-	Gameversion      *uint32 `protobuf:"varint,8,opt,name=gameversion" json:"gameversion,omitempty"`
-	Compress         *string `protobuf:"bytes,9,opt,name=compress" json:"compress,omitempty"`
-	Encrypt          *string `protobuf:"bytes,10,opt,name=encrypt" json:"encrypt,omitempty"`
-	Encryptkey       *string `protobuf:"bytes,11,opt,name=encryptkey" json:"encryptkey,omitempty"`
-	XXX_unrecognized []byte  `json:"-"`
-}
-
 var ()
 
 func BuildProtoFromJson(typ reflect.Type, cmdjson string) []byte {
