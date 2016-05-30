@@ -43,6 +43,9 @@ func (self *Test) Func() {
 }
 
 func main() {
+	fmt.Println(debug.SetMaxThreads(10))
+	fmt.Println(debug.SetMaxStack(1 << 20))
+	fmt.Println(debug.SetMaxStack(1 << 20))
 	test1 := Test{}
 	test1.next = &Test{x: 2}
 	test1.x = 1
@@ -86,6 +89,8 @@ func main() {
 	fmt.Println(len, string(buf[:len]))
 	//debug.PrintStack()
 	fmt.Println(debug.SetMaxThreads(10))
+	fmt.Println(debug.SetMaxStack(10))
+
 	i := 100
 	fmt.Println(reflect.TypeOf((*int32)(nil)).Elem())
 	fmt.Println(reflect.ValueOf(&i).Kind())

@@ -3,12 +3,18 @@ package main
 import (
 	"code.google.com/p/goprotobuf/proto"
 	"git.code4.in/mobilegameserver/platcommon"
+	"github.com/dedis/protobuf"
+	//"github.com/golang/protobuf/ptypes"
 
 	"fmt"
 	"reflect"
 )
 
 func main() {
+	m := make(map[int]string)
+	m[1] = "wabghaijun"
+	a := 1
+	fmt.Println(protobuf.Encode(&a))
 	mset := make(map[int32]proto.Extension)
 	//mset[1] = proto.Extension{enc: []byte("sss")}
 	//umset, err := proto.MarshalMessageSet(mset)
