@@ -48,6 +48,11 @@ func BuildJsonFromProto(cmdname string, cmddata []byte) string {
 	return string(recv_json)
 }
 
+type RequestUpFrameSyncNullUserPmd_C struct {
+	Data             []byte `protobuf:"bytes,1,opt,name=data" json:"data,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
 func main() {
 	account := "wangaijun"
 	token := "Token"
@@ -73,4 +78,7 @@ func main() {
 	fmt.Println(reflect.ValueOf(*test).Field(0).Elem().String())
 	fmt.Println(*test)
 	fmt.Println("xxxxx:", anypb.Value)
+	data := `{"data":"[whj]"}`
+	ru := &RequestUpFrameSyncNullUserPmd_C{}
+	fmt.Println(json.Unmarshal([]byte(data), ru), ru.Data)
 }

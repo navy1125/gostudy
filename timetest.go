@@ -42,15 +42,16 @@ func (self *Test) Add() int {
 }
 
 func main() {
+	fmt.Println("xxxxxxx", int64(int64(time.Now().Nanosecond())/time.Millisecond.Nanoseconds()*time.Millisecond.Nanoseconds()), int(time.Millisecond), int(time.Millisecond.Nanoseconds()))
+	return
 	tt := &Test{}
 	fmt.Println(tt.offset)
 	fmt.Println(tt.Add())
 	fmt.Println(tt.offset)
-	return
 	fmt.Println(unibase.Atoi("192.158.68.2"))
 	d, e := time.ParseDuration("1s")
 	fmt.Println(d, e)
-	fmt.Println(int(time.Millisecond), int(time.Millisecond.Nanoseconds()))
+	fmt.Println("xxxxxxx", int(time.Millisecond), int(time.Millisecond.Nanoseconds()))
 	year, month, day := time.Now().Date()
 	fmt.Println(year, month, day)
 	ip := net.ParseIP("1.1.1.11").To4()

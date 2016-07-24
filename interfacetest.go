@@ -9,18 +9,36 @@ import (
 
 type Interface interface {
 	String() string
+	GetMe() Interface
 }
+
 type StructInterface struct {
 }
 
 func (self *StructInterface) String() string {
 	return "aaaa"
 }
+func (self *StructInterface) GetMe() Interface {
+	return self
+}
+
+type StructInterface2 struct {
+	StructInterface
+}
+
+func (self *StructInterface2) String() string {
+	return "bbbb"
+}
 
 func main() {
 	st := &StructInterface{}
+	st2 := &StructInterface2{}
 	var it Interface
 	it = st
+	fmt.Println(it.GetMe().String())
+	it = st2
+	fmt.Println(it.GetMe().(*StructInterface2).String())
+	return
 	begin := time.Now().UnixNano()
 	fmt.Println("begin:", begin)
 	for i := 0; i < 1000000000; i++ {

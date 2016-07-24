@@ -29,6 +29,14 @@ func slice() {
 	//names := []string{}
 	//names := make([]string, 0, 1000000)
 	var names []string
+	var names1 []string
+	names = append(names, "whj")
+	names1 = append(names1, "whj")
+	if names == names1 {
+		fmt.Println("names == name1")
+	} else {
+		fmt.Println("names != name1")
+	}
 	t := time.Now()
 	for i := 1; i <= 1000000; i++ {
 		names = append(names, name)

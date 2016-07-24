@@ -16,6 +16,14 @@ func (self *Test) Foo(test string) {
 type TestFunc func(t *Test, test string)
 
 func main() {
+	name := "wang"
+	fmt.Println(fmt.Sprintf("xxxxxxxxx:%s", strings.ToUpper(name[:4])))
+	fmt.Println(fmt.Sprintf("xxxxxxxxx:%d,%d", int64(-1), int32(40649595150)))
+	var listi []int
+	listi = append(listi, 1)
+	for i, v := range listi {
+		fmt.Println(i, len(listi), v)
+	}
 	var b []byte
 	s := string(b)
 	fmt.Println(s)

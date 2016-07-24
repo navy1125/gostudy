@@ -1,0 +1,8 @@
+#https://github.com/golang/go/wiki/Mobile
+go get golang.org/x/mobile/cmd/gomobile
+export PATH=$PATH:$GOROOT/bin:/Users/whj/ClangFormat-Xcode/bin:/Users/whj/mygo/bin/
+gomobile init # it might take a few minute
+go get -d golang.org/x/mobile/example/basic
+vim ~/mygo/src/golang.org/x/mobile/cmd/gomobile/build_iosapp.go # 这一行是为了修改证书,否则ios编译不过
+go install golang.org/x/mobile/cmd/gomobile # 这一行是为了修改证书,否则ios编译不过
+gomobile build -target=ios golang.org/x/mobile/example/basic
