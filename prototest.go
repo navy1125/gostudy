@@ -11,6 +11,12 @@ import (
 )
 
 func main() {
+	uj := &Pmd.UserJsMessageForwardUserPmd_CS{}
+	uj.Msgbytes = []byte(`{"whj":111}`)
+	fmt.Println("XXXXX", uj.String(), proto.MarshalTextString(uj))
+	rc := &Pmd.ReconnectErrorLoginUserPmd_S{}
+	rc.Desc = proto.String(`{"whj":111}`)
+	fmt.Println("xxxxx", rc.String(), proto.MarshalTextString(rc), *rc.Desc)
 	m := make(map[int]string)
 	m[1] = "wabghaijun"
 	a := 1

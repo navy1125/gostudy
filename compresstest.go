@@ -15,29 +15,34 @@ import (
 
 func main() {
 	//inData, _ := ioutil.ReadFile("stuff.dat")
-	dict := []byte(``)
 	//inData := []byte(`{"do":"plat-token-login","data":{"gameid":170,"platinfo":{"account":"10722","platid":"67","email":"whj@whj.whj","gender":"male","nickname":"navy1125","timestamp":"12345","uid":"10722","sign":"%s"}}}{"do":"plat-token-login","data":{"gameid":170,"platinfo":{"account":"10722","platid":"67","email":"whj@whj.whj","gender":"male","nickname":"navy1125","timestamp":"12345","uid":"10722","sign":"%s"}}}{"do":"plat-token-login","data":{"gameid":170,"platinfo":{"account":"10722","platid":"67","email":"whj@whj.whj","gender":"male","nickname":"navy1125","timestamp":"12345","uid":"10722","sign":"%s"}}}{"do":"plat-token-login","data":{"gameid":170,"platinfo":{"account":"10722","platid":"67","email":"whj@whj.whj","gender":"male","nickname":"navy1125","timestamp":"12345","uid":"10722","sign":"%s"}}}`)
 	//inData := []byte(`{"do":"request-zone-list","data":{"gameid":170},"gameid":170}`)
-	inData := []byte(`王海军`)
+	inData := []byte(`王海军王海军王海军王海军王海军`)
+	//inData := []byte(``)
+	dict := []byte(`王海军王海军王海军王海军`)
 	compressedData := new(bytes.Buffer)
+	data, _ := Compress(CompressType_Flate, inData)
+	fmt.Println("commpress Flate len:", len(inData), len(data))
+	data, _ = Compress(CompressType_Gzip, inData)
+	fmt.Println("commpress Gzip len:", len(inData), len(data))
+	data, _ = Compress(CompressType_Zlib, inData)
+	fmt.Println("commpress Zlib len:", len(inData), len(data))
+	data, _ = Compress(CompressType_Lzw, inData)
+	fmt.Println("commpress Lze len:", len(inData), len(data))
+
 	//compress(inData, compressedData, 9)
 	compressdict(inData, compressedData, 9, dict)
+	fmt.Println("compressdict len:", len(inData), compressedData.Len())
 
-	data, _ := Compress(CompressType_Flate, inData)
-	fmt.Println("commpress len:", len(inData), compressedData.Len(), len(data))
-	fmt.Println(fmt.Sprintf("%o", data))
-	fmt.Println(fmt.Sprintf("%s", string(data)))
-	fmt.Println(fmt.Sprintf("%d", data))
-	fmt.Println(fmt.Sprintf("%x", data))
 	//ioutil.WriteFile("compressed.dat", compressedData.Bytes(), os.ModeAppend)
 
-	deCompressedData := new(bytes.Buffer)
+	//deCompressedData := new(bytes.Buffer)
 	//decompress(compressedData, deCompressedData)
-	decompressdict(compressedData, deCompressedData, dict)
-	fmt.Println(deCompressedData)
-	outdata, _ := Decompress(CompressType_Flate, data)
+	//decompressdict(compressedData, deCompressedData, dict)
 	//fmt.Println(deCompressedData)
-	fmt.Println(string(outdata))
+	//outdata, _ := Decompress(CompressType_Flate, data)
+	//fmt.Println(deCompressedData)
+	//fmt.Println(string(outdata))
 
 }
 func compress(src []byte, dest io.Writer, level int) {
