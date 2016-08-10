@@ -1,0 +1,3 @@
+go install -v -x -buildmode=shared runtime sync/atomic
+go install -v -x -buildmode=shared -linkshared
+go build -v -x -linkshared
