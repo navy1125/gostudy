@@ -78,7 +78,7 @@ func main() {
 	}
 	fmt.Println(i)
 	inData := []byte(`ddd`)
-	fmt.Println(inData[0:])
+	fmt.Println(inData[0:-1])
 	st := &Struct{}
 	parseGatewayTaskNullGateCmd(st)
 	TestStruct(st)

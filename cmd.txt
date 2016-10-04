@@ -1,3 +1,66 @@
 go install -v -x -buildmode=shared runtime sync/atomic
 go install -v -x -buildmode=shared -linkshared
 go build -v -x -linkshared
+go build -v -x -buildmode=c-shared -o lib.so
+go build -v -x -buildmode=c-archive -o lib.a
+go install -v -x -buildmode=shared runtime sync/atomic #构建核心基本库
+go install -v -x -buildmode=shared -linkshared #构建GO动态库
+go build -v -x -linkshared
+ LD_LIBRARY_PATH=build/ ./build/gohttp-c
+
+
+ 一、Go调用C的动态库：
+   1、创建C的头文件
+        //  foo.h
+        extern int Num;   // 提供给 go调用
+        void foo();
+
+    2、创建C的源文件
+        // foo.c
+          int Num = 6;
+          void foo()
+         {
+             printf("I'm  Langston!\n");
+          }
+
+    3、创建go源文件
+        // CgoTest project main.go         
+         package main
+
+         // #include "foo.h"
+          import "C"
+          import "fmt"
+         
+        func main() {
+           fmt.Println(C.Num)
+           C.foo()
+        }
+
+     4、生成动态库(libfoo.so, 在Linux下叫共享库，我口误Go中调用C的动态库与静态库 - Langston - Langstons世界)
+        gcc -c foo.c
+        gcc -shared -Wl,-soname,libfoo.so -o libfoo.so  foo.o
+
+     5、使用go工具编译项目
+         go build
+     6、运行生成的执行档
+        ./CgoTest
+
+二、Go调用C的静态库：
+  只有第3、第4步不一样，其他都一样的。这里只针对这两步做处理。
+  3、创建go源文件
+     // CgoTest project main.go
+     package main
+ 
+     // #cgo LDFLAGS: -L ./ -lfoo
+     // #include "foo.h"
+     import "C"
+     import "fmt"
+ 
+     func main() {
+         fmt.Println(C.Num)
+         C.foo()
+     }
+
+  4、生成静态库(libfoo.a)
+      gcc -c foo.c
+      ar -rv libfoo.a foo.o
