@@ -45,6 +45,11 @@ package main
 import proto "code.google.com/p/goprotobuf/proto"
 import json "encoding/json"
 import math "math"
+import (
+	"bytes"
+	"fmt"
+	fflib "github.com/pquerna/ffjson/fflib/v1"
+)
 
 // Reference proto, json, and math imports to suppress error if they are not otherwise used.
 var _ = proto.Marshal
@@ -1517,6 +1522,794 @@ func init() {
 	proto.RegisterEnum("LoginReturnFailReason", LoginReturnFailReason_name, LoginReturnFailReason_value)
 	proto.RegisterEnum("PlatType", PlatType_name, PlatType_value)
 	proto.RegisterEnum("Login_Param", Login_Param_name, Login_Param_value)
+}
+
+const (
+	ffj_t_AccountTokenVerifyLoginUserPmd_CSbase = iota
+	ffj_t_AccountTokenVerifyLoginUserPmd_CSno_such_key
+
+	ffj_t_AccountTokenVerifyLoginUserPmd_CS_Account
+
+	ffj_t_AccountTokenVerifyLoginUserPmd_CS_Token
+
+	ffj_t_AccountTokenVerifyLoginUserPmd_CS_Version
+
+	ffj_t_AccountTokenVerifyLoginUserPmd_CS_Gameid
+
+	ffj_t_AccountTokenVerifyLoginUserPmd_CS_Mid
+
+	ffj_t_AccountTokenVerifyLoginUserPmd_CS_Platid
+
+	ffj_t_AccountTokenVerifyLoginUserPmd_CS_Zoneid
+
+	ffj_t_AccountTokenVerifyLoginUserPmd_CS_Gameversion
+
+	ffj_t_AccountTokenVerifyLoginUserPmd_CS_Compress
+
+	ffj_t_AccountTokenVerifyLoginUserPmd_CS_Encrypt
+
+	ffj_t_AccountTokenVerifyLoginUserPmd_CS_Encryptkey
+)
+
+var ffj_key_AccountTokenVerifyLoginUserPmd_CS_Account = []byte("account")
+
+var ffj_key_AccountTokenVerifyLoginUserPmd_CS_Token = []byte("token")
+
+var ffj_key_AccountTokenVerifyLoginUserPmd_CS_Version = []byte("version")
+
+var ffj_key_AccountTokenVerifyLoginUserPmd_CS_Gameid = []byte("gameid")
+
+var ffj_key_AccountTokenVerifyLoginUserPmd_CS_Mid = []byte("mid")
+
+var ffj_key_AccountTokenVerifyLoginUserPmd_CS_Platid = []byte("platid")
+
+var ffj_key_AccountTokenVerifyLoginUserPmd_CS_Zoneid = []byte("zoneid")
+
+var ffj_key_AccountTokenVerifyLoginUserPmd_CS_Gameversion = []byte("gameversion")
+
+var ffj_key_AccountTokenVerifyLoginUserPmd_CS_Compress = []byte("compress")
+
+var ffj_key_AccountTokenVerifyLoginUserPmd_CS_Encrypt = []byte("encrypt")
+
+var ffj_key_AccountTokenVerifyLoginUserPmd_CS_Encryptkey = []byte("encryptkey")
+
+func (uj *AccountTokenVerifyLoginUserPmd_CS) UnmarshalJSON(input []byte) error {
+	fs := fflib.NewFFLexer(input)
+	return uj.UnmarshalJSONFFLexer(fs, fflib.FFParse_map_start)
+}
+
+func (uj *AccountTokenVerifyLoginUserPmd_CS) UnmarshalJSONFFLexer(fs *fflib.FFLexer, state fflib.FFParseState) error {
+	var err error = nil
+	currentKey := ffj_t_AccountTokenVerifyLoginUserPmd_CSbase
+	_ = currentKey
+	tok := fflib.FFTok_init
+	wantedTok := fflib.FFTok_init
+
+mainparse:
+	for {
+		tok = fs.Scan()
+		//	println(fmt.Sprintf("debug: tok: %v  state: %v", tok, state))
+		if tok == fflib.FFTok_error {
+			goto tokerror
+		}
+
+		switch state {
+
+		case fflib.FFParse_map_start:
+			if tok != fflib.FFTok_left_bracket {
+				wantedTok = fflib.FFTok_left_bracket
+				goto wrongtokenerror
+			}
+			state = fflib.FFParse_want_key
+			continue
+
+		case fflib.FFParse_after_value:
+			if tok == fflib.FFTok_comma {
+				state = fflib.FFParse_want_key
+			} else if tok == fflib.FFTok_right_bracket {
+				goto done
+			} else {
+				wantedTok = fflib.FFTok_comma
+				goto wrongtokenerror
+			}
+
+		case fflib.FFParse_want_key:
+			// json {} ended. goto exit. woo.
+			if tok == fflib.FFTok_right_bracket {
+				goto done
+			}
+			if tok != fflib.FFTok_string {
+				wantedTok = fflib.FFTok_string
+				goto wrongtokenerror
+			}
+
+			kn := fs.Output.Bytes()
+			if len(kn) <= 0 {
+				// "" case. hrm.
+				currentKey = ffj_t_AccountTokenVerifyLoginUserPmd_CSno_such_key
+				state = fflib.FFParse_want_colon
+				goto mainparse
+			} else {
+				switch kn[0] {
+
+				case 'a':
+
+					if bytes.Equal(ffj_key_AccountTokenVerifyLoginUserPmd_CS_Account, kn) {
+						currentKey = ffj_t_AccountTokenVerifyLoginUserPmd_CS_Account
+						state = fflib.FFParse_want_colon
+						goto mainparse
+					}
+
+				case 'c':
+
+					if bytes.Equal(ffj_key_AccountTokenVerifyLoginUserPmd_CS_Compress, kn) {
+						currentKey = ffj_t_AccountTokenVerifyLoginUserPmd_CS_Compress
+						state = fflib.FFParse_want_colon
+						goto mainparse
+					}
+
+				case 'e':
+
+					if bytes.Equal(ffj_key_AccountTokenVerifyLoginUserPmd_CS_Encrypt, kn) {
+						currentKey = ffj_t_AccountTokenVerifyLoginUserPmd_CS_Encrypt
+						state = fflib.FFParse_want_colon
+						goto mainparse
+
+					} else if bytes.Equal(ffj_key_AccountTokenVerifyLoginUserPmd_CS_Encryptkey, kn) {
+						currentKey = ffj_t_AccountTokenVerifyLoginUserPmd_CS_Encryptkey
+						state = fflib.FFParse_want_colon
+						goto mainparse
+					}
+
+				case 'g':
+
+					if bytes.Equal(ffj_key_AccountTokenVerifyLoginUserPmd_CS_Gameid, kn) {
+						currentKey = ffj_t_AccountTokenVerifyLoginUserPmd_CS_Gameid
+						state = fflib.FFParse_want_colon
+						goto mainparse
+
+					} else if bytes.Equal(ffj_key_AccountTokenVerifyLoginUserPmd_CS_Gameversion, kn) {
+						currentKey = ffj_t_AccountTokenVerifyLoginUserPmd_CS_Gameversion
+						state = fflib.FFParse_want_colon
+						goto mainparse
+					}
+
+				case 'm':
+
+					if bytes.Equal(ffj_key_AccountTokenVerifyLoginUserPmd_CS_Mid, kn) {
+						currentKey = ffj_t_AccountTokenVerifyLoginUserPmd_CS_Mid
+						state = fflib.FFParse_want_colon
+						goto mainparse
+					}
+
+				case 'p':
+
+					if bytes.Equal(ffj_key_AccountTokenVerifyLoginUserPmd_CS_Platid, kn) {
+						currentKey = ffj_t_AccountTokenVerifyLoginUserPmd_CS_Platid
+						state = fflib.FFParse_want_colon
+						goto mainparse
+					}
+
+				case 't':
+
+					if bytes.Equal(ffj_key_AccountTokenVerifyLoginUserPmd_CS_Token, kn) {
+						currentKey = ffj_t_AccountTokenVerifyLoginUserPmd_CS_Token
+						state = fflib.FFParse_want_colon
+						goto mainparse
+					}
+
+				case 'v':
+
+					if bytes.Equal(ffj_key_AccountTokenVerifyLoginUserPmd_CS_Version, kn) {
+						currentKey = ffj_t_AccountTokenVerifyLoginUserPmd_CS_Version
+						state = fflib.FFParse_want_colon
+						goto mainparse
+					}
+
+				case 'z':
+
+					if bytes.Equal(ffj_key_AccountTokenVerifyLoginUserPmd_CS_Zoneid, kn) {
+						currentKey = ffj_t_AccountTokenVerifyLoginUserPmd_CS_Zoneid
+						state = fflib.FFParse_want_colon
+						goto mainparse
+					}
+
+				}
+
+				if fflib.EqualFoldRight(ffj_key_AccountTokenVerifyLoginUserPmd_CS_Encryptkey, kn) {
+					currentKey = ffj_t_AccountTokenVerifyLoginUserPmd_CS_Encryptkey
+					state = fflib.FFParse_want_colon
+					goto mainparse
+				}
+
+				if fflib.SimpleLetterEqualFold(ffj_key_AccountTokenVerifyLoginUserPmd_CS_Encrypt, kn) {
+					currentKey = ffj_t_AccountTokenVerifyLoginUserPmd_CS_Encrypt
+					state = fflib.FFParse_want_colon
+					goto mainparse
+				}
+
+				if fflib.EqualFoldRight(ffj_key_AccountTokenVerifyLoginUserPmd_CS_Compress, kn) {
+					currentKey = ffj_t_AccountTokenVerifyLoginUserPmd_CS_Compress
+					state = fflib.FFParse_want_colon
+					goto mainparse
+				}
+
+				if fflib.EqualFoldRight(ffj_key_AccountTokenVerifyLoginUserPmd_CS_Gameversion, kn) {
+					currentKey = ffj_t_AccountTokenVerifyLoginUserPmd_CS_Gameversion
+					state = fflib.FFParse_want_colon
+					goto mainparse
+				}
+
+				if fflib.SimpleLetterEqualFold(ffj_key_AccountTokenVerifyLoginUserPmd_CS_Zoneid, kn) {
+					currentKey = ffj_t_AccountTokenVerifyLoginUserPmd_CS_Zoneid
+					state = fflib.FFParse_want_colon
+					goto mainparse
+				}
+
+				if fflib.SimpleLetterEqualFold(ffj_key_AccountTokenVerifyLoginUserPmd_CS_Platid, kn) {
+					currentKey = ffj_t_AccountTokenVerifyLoginUserPmd_CS_Platid
+					state = fflib.FFParse_want_colon
+					goto mainparse
+				}
+
+				if fflib.SimpleLetterEqualFold(ffj_key_AccountTokenVerifyLoginUserPmd_CS_Mid, kn) {
+					currentKey = ffj_t_AccountTokenVerifyLoginUserPmd_CS_Mid
+					state = fflib.FFParse_want_colon
+					goto mainparse
+				}
+
+				if fflib.SimpleLetterEqualFold(ffj_key_AccountTokenVerifyLoginUserPmd_CS_Gameid, kn) {
+					currentKey = ffj_t_AccountTokenVerifyLoginUserPmd_CS_Gameid
+					state = fflib.FFParse_want_colon
+					goto mainparse
+				}
+
+				if fflib.EqualFoldRight(ffj_key_AccountTokenVerifyLoginUserPmd_CS_Version, kn) {
+					currentKey = ffj_t_AccountTokenVerifyLoginUserPmd_CS_Version
+					state = fflib.FFParse_want_colon
+					goto mainparse
+				}
+
+				if fflib.EqualFoldRight(ffj_key_AccountTokenVerifyLoginUserPmd_CS_Token, kn) {
+					currentKey = ffj_t_AccountTokenVerifyLoginUserPmd_CS_Token
+					state = fflib.FFParse_want_colon
+					goto mainparse
+				}
+
+				if fflib.SimpleLetterEqualFold(ffj_key_AccountTokenVerifyLoginUserPmd_CS_Account, kn) {
+					currentKey = ffj_t_AccountTokenVerifyLoginUserPmd_CS_Account
+					state = fflib.FFParse_want_colon
+					goto mainparse
+				}
+
+				currentKey = ffj_t_AccountTokenVerifyLoginUserPmd_CSno_such_key
+				state = fflib.FFParse_want_colon
+				goto mainparse
+			}
+
+		case fflib.FFParse_want_colon:
+			if tok != fflib.FFTok_colon {
+				wantedTok = fflib.FFTok_colon
+				goto wrongtokenerror
+			}
+			state = fflib.FFParse_want_value
+			continue
+		case fflib.FFParse_want_value:
+
+			if tok == fflib.FFTok_left_brace || tok == fflib.FFTok_left_bracket || tok == fflib.FFTok_integer || tok == fflib.FFTok_double || tok == fflib.FFTok_string || tok == fflib.FFTok_bool || tok == fflib.FFTok_null {
+				switch currentKey {
+
+				case ffj_t_AccountTokenVerifyLoginUserPmd_CS_Account:
+					goto handle_Account
+
+				case ffj_t_AccountTokenVerifyLoginUserPmd_CS_Token:
+					goto handle_Token
+
+				case ffj_t_AccountTokenVerifyLoginUserPmd_CS_Version:
+					goto handle_Version
+
+				case ffj_t_AccountTokenVerifyLoginUserPmd_CS_Gameid:
+					goto handle_Gameid
+
+				case ffj_t_AccountTokenVerifyLoginUserPmd_CS_Mid:
+					goto handle_Mid
+
+				case ffj_t_AccountTokenVerifyLoginUserPmd_CS_Platid:
+					goto handle_Platid
+
+				case ffj_t_AccountTokenVerifyLoginUserPmd_CS_Zoneid:
+					goto handle_Zoneid
+
+				case ffj_t_AccountTokenVerifyLoginUserPmd_CS_Gameversion:
+					goto handle_Gameversion
+
+				case ffj_t_AccountTokenVerifyLoginUserPmd_CS_Compress:
+					goto handle_Compress
+
+				case ffj_t_AccountTokenVerifyLoginUserPmd_CS_Encrypt:
+					goto handle_Encrypt
+
+				case ffj_t_AccountTokenVerifyLoginUserPmd_CS_Encryptkey:
+					goto handle_Encryptkey
+
+				case ffj_t_AccountTokenVerifyLoginUserPmd_CSno_such_key:
+					err = fs.SkipField(tok)
+					if err != nil {
+						return fs.WrapErr(err)
+					}
+					state = fflib.FFParse_after_value
+					goto mainparse
+				}
+			} else {
+				goto wantedvalue
+			}
+		}
+	}
+
+handle_Account:
+
+	/* handler: uj.Account type=string kind=string quoted=false*/
+
+	{
+
+		{
+			if tok != fflib.FFTok_string && tok != fflib.FFTok_null {
+				return fs.WrapErr(fmt.Errorf("cannot unmarshal %s into Go value for string", tok))
+			}
+		}
+
+		if tok == fflib.FFTok_null {
+
+			uj.Account = nil
+
+		} else {
+
+			var tval string
+			outBuf := fs.Output.Bytes()
+
+			tval = string(string(outBuf))
+			uj.Account = &tval
+
+		}
+	}
+
+	state = fflib.FFParse_after_value
+	goto mainparse
+
+handle_Token:
+
+	/* handler: uj.Token type=string kind=string quoted=false*/
+
+	{
+
+		{
+			if tok != fflib.FFTok_string && tok != fflib.FFTok_null {
+				return fs.WrapErr(fmt.Errorf("cannot unmarshal %s into Go value for string", tok))
+			}
+		}
+
+		if tok == fflib.FFTok_null {
+
+			uj.Token = nil
+
+		} else {
+
+			var tval string
+			outBuf := fs.Output.Bytes()
+
+			tval = string(string(outBuf))
+			uj.Token = &tval
+
+		}
+	}
+
+	state = fflib.FFParse_after_value
+	goto mainparse
+
+handle_Version:
+
+	/* handler: uj.Version type=uint32 kind=uint32 quoted=false*/
+
+	{
+		if tok != fflib.FFTok_integer && tok != fflib.FFTok_null {
+			return fs.WrapErr(fmt.Errorf("cannot unmarshal %s into Go value for uint32", tok))
+		}
+	}
+
+	{
+
+		if tok == fflib.FFTok_null {
+
+			uj.Version = nil
+
+		} else {
+
+			tval, err := fflib.ParseUint(fs.Output.Bytes(), 10, 32)
+
+			if err != nil {
+				return fs.WrapErr(err)
+			}
+
+			ttypval := uint32(tval)
+			uj.Version = &ttypval
+
+		}
+	}
+
+	state = fflib.FFParse_after_value
+	goto mainparse
+
+handle_Gameid:
+
+	/* handler: uj.Gameid type=uint32 kind=uint32 quoted=false*/
+
+	{
+		if tok != fflib.FFTok_integer && tok != fflib.FFTok_null {
+			return fs.WrapErr(fmt.Errorf("cannot unmarshal %s into Go value for uint32", tok))
+		}
+	}
+
+	{
+
+		if tok == fflib.FFTok_null {
+
+			uj.Gameid = nil
+
+		} else {
+
+			tval, err := fflib.ParseUint(fs.Output.Bytes(), 10, 32)
+
+			if err != nil {
+				return fs.WrapErr(err)
+			}
+
+			ttypval := uint32(tval)
+			uj.Gameid = &ttypval
+
+		}
+	}
+
+	state = fflib.FFParse_after_value
+	goto mainparse
+
+handle_Mid:
+
+	/* handler: uj.Mid type=string kind=string quoted=false*/
+
+	{
+
+		{
+			if tok != fflib.FFTok_string && tok != fflib.FFTok_null {
+				return fs.WrapErr(fmt.Errorf("cannot unmarshal %s into Go value for string", tok))
+			}
+		}
+
+		if tok == fflib.FFTok_null {
+
+			uj.Mid = nil
+
+		} else {
+
+			var tval string
+			outBuf := fs.Output.Bytes()
+
+			tval = string(string(outBuf))
+			uj.Mid = &tval
+
+		}
+	}
+
+	state = fflib.FFParse_after_value
+	goto mainparse
+
+handle_Platid:
+
+	/* handler: uj.Platid type=uint32 kind=uint32 quoted=false*/
+
+	{
+		if tok != fflib.FFTok_integer && tok != fflib.FFTok_null {
+			return fs.WrapErr(fmt.Errorf("cannot unmarshal %s into Go value for uint32", tok))
+		}
+	}
+
+	{
+
+		if tok == fflib.FFTok_null {
+
+			uj.Platid = nil
+
+		} else {
+
+			tval, err := fflib.ParseUint(fs.Output.Bytes(), 10, 32)
+
+			if err != nil {
+				return fs.WrapErr(err)
+			}
+
+			ttypval := uint32(tval)
+			uj.Platid = &ttypval
+
+		}
+	}
+
+	state = fflib.FFParse_after_value
+	goto mainparse
+
+handle_Zoneid:
+
+	/* handler: uj.Zoneid type=uint32 kind=uint32 quoted=false*/
+
+	{
+		if tok != fflib.FFTok_integer && tok != fflib.FFTok_null {
+			return fs.WrapErr(fmt.Errorf("cannot unmarshal %s into Go value for uint32", tok))
+		}
+	}
+
+	{
+
+		if tok == fflib.FFTok_null {
+
+			uj.Zoneid = nil
+
+		} else {
+
+			tval, err := fflib.ParseUint(fs.Output.Bytes(), 10, 32)
+
+			if err != nil {
+				return fs.WrapErr(err)
+			}
+
+			ttypval := uint32(tval)
+			uj.Zoneid = &ttypval
+
+		}
+	}
+
+	state = fflib.FFParse_after_value
+	goto mainparse
+
+handle_Gameversion:
+
+	/* handler: uj.Gameversion type=uint32 kind=uint32 quoted=false*/
+
+	{
+		if tok != fflib.FFTok_integer && tok != fflib.FFTok_null {
+			return fs.WrapErr(fmt.Errorf("cannot unmarshal %s into Go value for uint32", tok))
+		}
+	}
+
+	{
+
+		if tok == fflib.FFTok_null {
+
+			uj.Gameversion = nil
+
+		} else {
+
+			tval, err := fflib.ParseUint(fs.Output.Bytes(), 10, 32)
+
+			if err != nil {
+				return fs.WrapErr(err)
+			}
+
+			ttypval := uint32(tval)
+			uj.Gameversion = &ttypval
+
+		}
+	}
+
+	state = fflib.FFParse_after_value
+	goto mainparse
+
+handle_Compress:
+
+	/* handler: uj.Compress type=string kind=string quoted=false*/
+
+	{
+
+		{
+			if tok != fflib.FFTok_string && tok != fflib.FFTok_null {
+				return fs.WrapErr(fmt.Errorf("cannot unmarshal %s into Go value for string", tok))
+			}
+		}
+
+		if tok == fflib.FFTok_null {
+
+			uj.Compress = nil
+
+		} else {
+
+			var tval string
+			outBuf := fs.Output.Bytes()
+
+			tval = string(string(outBuf))
+			uj.Compress = &tval
+
+		}
+	}
+
+	state = fflib.FFParse_after_value
+	goto mainparse
+
+handle_Encrypt:
+
+	/* handler: uj.Encrypt type=string kind=string quoted=false*/
+
+	{
+
+		{
+			if tok != fflib.FFTok_string && tok != fflib.FFTok_null {
+				return fs.WrapErr(fmt.Errorf("cannot unmarshal %s into Go value for string", tok))
+			}
+		}
+
+		if tok == fflib.FFTok_null {
+
+			uj.Encrypt = nil
+
+		} else {
+
+			var tval string
+			outBuf := fs.Output.Bytes()
+
+			tval = string(string(outBuf))
+			uj.Encrypt = &tval
+
+		}
+	}
+
+	state = fflib.FFParse_after_value
+	goto mainparse
+
+handle_Encryptkey:
+
+	/* handler: uj.Encryptkey type=string kind=string quoted=false*/
+
+	{
+
+		{
+			if tok != fflib.FFTok_string && tok != fflib.FFTok_null {
+				return fs.WrapErr(fmt.Errorf("cannot unmarshal %s into Go value for string", tok))
+			}
+		}
+
+		if tok == fflib.FFTok_null {
+
+			uj.Encryptkey = nil
+
+		} else {
+
+			var tval string
+			outBuf := fs.Output.Bytes()
+
+			tval = string(string(outBuf))
+			uj.Encryptkey = &tval
+
+		}
+	}
+
+	state = fflib.FFParse_after_value
+	goto mainparse
+
+wantedvalue:
+	return fs.WrapErr(fmt.Errorf("wanted value token, but got token: %v", tok))
+wrongtokenerror:
+	return fs.WrapErr(fmt.Errorf("ffjson: wanted token: %v, but got token: %v output=%s", wantedTok, tok, fs.Output.String()))
+tokerror:
+	if fs.BigError != nil {
+		return fs.WrapErr(fs.BigError)
+	}
+	err = fs.Error.ToError()
+	if err != nil {
+		return fs.WrapErr(err)
+	}
+	panic("ffjson-generated: unreachable, please report bug.")
+done:
+	return nil
+}
+
+func (mj *AccountTokenVerifyLoginUserPmd_CS) MarshalJSON() ([]byte, error) {
+	var buf fflib.Buffer
+	if mj == nil {
+		buf.WriteString("null")
+		return buf.Bytes(), nil
+	}
+	err := mj.MarshalJSONBuf(&buf)
+	if err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+func (mj *AccountTokenVerifyLoginUserPmd_CS) MarshalJSONBuf(buf fflib.EncodingBuffer) error {
+	if mj == nil {
+		buf.WriteString("null")
+		return nil
+	}
+	var err error
+	var obj []byte
+	_ = obj
+	_ = err
+	buf.WriteString(`{ `)
+	if mj.Account != nil {
+		if true {
+			buf.WriteString(`"account":`)
+			fflib.WriteJsonString(buf, string(*mj.Account))
+			buf.WriteByte(',')
+		}
+	}
+	if mj.Token != nil {
+		if true {
+			buf.WriteString(`"token":`)
+			fflib.WriteJsonString(buf, string(*mj.Token))
+			buf.WriteByte(',')
+		}
+	}
+	if mj.Version != nil {
+		if true {
+			buf.WriteString(`"version":`)
+			fflib.FormatBits2(buf, uint64(*mj.Version), 10, false)
+			buf.WriteByte(',')
+		}
+	}
+	if mj.Gameid != nil {
+		if true {
+			buf.WriteString(`"gameid":`)
+			fflib.FormatBits2(buf, uint64(*mj.Gameid), 10, false)
+			buf.WriteByte(',')
+		}
+	}
+	if mj.Mid != nil {
+		if true {
+			buf.WriteString(`"mid":`)
+			fflib.WriteJsonString(buf, string(*mj.Mid))
+			buf.WriteByte(',')
+		}
+	}
+	if mj.Platid != nil {
+		if true {
+			buf.WriteString(`"platid":`)
+			fflib.FormatBits2(buf, uint64(*mj.Platid), 10, false)
+			buf.WriteByte(',')
+		}
+	}
+	if mj.Zoneid != nil {
+		if true {
+			buf.WriteString(`"zoneid":`)
+			fflib.FormatBits2(buf, uint64(*mj.Zoneid), 10, false)
+			buf.WriteByte(',')
+		}
+	}
+	if mj.Gameversion != nil {
+		if true {
+			buf.WriteString(`"gameversion":`)
+			fflib.FormatBits2(buf, uint64(*mj.Gameversion), 10, false)
+			buf.WriteByte(',')
+		}
+	}
+	if mj.Compress != nil {
+		if true {
+			buf.WriteString(`"compress":`)
+			fflib.WriteJsonString(buf, string(*mj.Compress))
+			buf.WriteByte(',')
+		}
+	}
+	if mj.Encrypt != nil {
+		if true {
+			buf.WriteString(`"encrypt":`)
+			fflib.WriteJsonString(buf, string(*mj.Encrypt))
+			buf.WriteByte(',')
+		}
+	}
+	if mj.Encryptkey != nil {
+		if true {
+			buf.WriteString(`"encryptkey":`)
+			fflib.WriteJsonString(buf, string(*mj.Encryptkey))
+			buf.WriteByte(',')
+		}
+	}
+	buf.Rewind(1)
+	buf.WriteByte('}')
+	return nil
 }
 
 var Login_Param_instance = map[string]interface{}{

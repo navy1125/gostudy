@@ -71,7 +71,7 @@ func main() {
 	now = time.Now().UnixNano()
 	for i := 0; i < 1000000; i++ {
 		send_json, _ = ffjson.Marshal(send)
-		ffjson.Pool(send_json)
+		//ffjson.Pool(send_json)
 	}
 	fmt.Println("ffjson:", time.Now().UnixNano()-now)
 	fmt.Println(string(send_json))

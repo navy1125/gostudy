@@ -51,6 +51,18 @@ func CheckChan() {
 }
 
 func main() {
+	chint := make(chan int, 100)
+	chint <- 1
+	chint <- 2
+	chint <- 3
+	close(chint)
+	fmt.Println(<-chint)
+	fmt.Println(<-chint)
+	fmt.Println(<-chint)
+	fmt.Println(<-chint)
+	fmt.Println(<-chint)
+	fmt.Println(<-chint)
+	return
 	str := fmt.Sprintf(`'%%sddd'`)
 	fmt.Println(fmt.Sprintf("%s", str))
 	m1 := make(map[chan []byte]bool)
