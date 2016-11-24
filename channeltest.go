@@ -7,6 +7,9 @@ import (
 	"time"
 )
 
+func init() {
+	fmt.Println("init")
+}
 func CheckChan() {
 	v := make(chan bool, 5)
 	v2 := make(chan bool, 5)

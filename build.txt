@@ -1,0 +1,2 @@
+local import 大多数只在go run 时生效 go build 时会有编译问题
+go run main.go
