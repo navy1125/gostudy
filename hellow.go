@@ -5,6 +5,7 @@ package main
 import (
 	//"flag"
 	"fmt"
+	"math"
 	//iconv "github.com/hwch/iconv"
 	//"os"
 	"reflect"
@@ -12,6 +13,7 @@ import (
 	"strconv"
 	//"rand"
 	//"C"
+	"syscall"
 )
 
 var (
@@ -59,6 +61,10 @@ func parseGatewayTaskNullGateCmd(v interface{}) bool {
 	return true
 }
 func main() {
+	a := uint32(10)
+	b := uint32(11)
+	fmt.Println("xxxxxxxxxxx", int64(4294967295), int64(math.Abs(float64(a-b))), syscall.SIGHUP)
+	fmt.Println(191*0XFFFFFFFF + 301)
 	whj := "whjwhjwhjwhwjhw"
 	if whj[0:1] == "w" {
 		fmt.Println(whj[1:])

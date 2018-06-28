@@ -12,7 +12,8 @@ func main() {
 	if err != nil {
 		fmt.Println("aa", err)
 	}
-	b := make([]byte, 1024)
+	b := []byte{}
+	//b := make([]byte, 1024)
 	n, err := fr.Read(b)
 	if err != nil {
 		fmt.Println("bb", string(b), err)

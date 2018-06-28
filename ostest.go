@@ -32,6 +32,7 @@ func TestPanic() {
 
 func main() {
 	fmt.Println(os.Stat("xxdf"))
+	fmt.Println(os.Stat("ostest.go"))
 	/*
 		ch := make(chan int, 2)
 		ch <- 1

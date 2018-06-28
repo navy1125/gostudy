@@ -4,9 +4,12 @@ import (
 	"errors"
 	"fmt"
 	"git.code4.in/mobilegameserver/unibase"
+	aa "git.code4.in/mobilegameserver/unibase/signal"
 	"net"
 	"os"
+	"os/signal"
 	"strings"
+	"syscall"
 	"time"
 )
 
@@ -42,8 +45,8 @@ func (self *Test) Add() int {
 }
 
 func main() {
-	fmt.Println("xxxxxxx", int64(int64(time.Now().Nanosecond())/time.Millisecond.Nanoseconds()*time.Millisecond.Nanoseconds()), int(time.Millisecond), int(time.Millisecond.Nanoseconds()))
-	return
+	signal.Notify(aa.ChanReload, syscall.SIGHUP)
+	//signal.InitSignal()
 	tt := &Test{}
 	fmt.Println(tt.offset)
 	fmt.Println(tt.Add())
@@ -78,13 +81,24 @@ func main() {
 	fmt.Printf("%d\n", time.Duration(seconds)*time.Second)
 	//zone, sec := now.Zone()
 	//fmt.Println(now.Unix(), now.Sub(1111), zone, sec)
+	ChanReload := make(chan os.Signal) //-HUP信号chan,1
 	go func() {
 		for {
+			time.Sleep(time.Second * 10)
 			select {
 			case <-time.After(2 * time.Second):
 				fmt.Println("2time.After:", time.Now().Unix())
-			case <-time.After(1 * time.Second):
-				fmt.Println("1time.After:", time.Now().Unix())
+			case <-ChanReload:
+				fmt.Println("kill hup:1")
+			}
+		}
+	}()
+	go func() {
+		for {
+			select {
+			case s := <-aa.ChanReload:
+				fmt.Println("kill hup:0")
+				ChanReload <- s
 			}
 		}
 	}()
