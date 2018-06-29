@@ -47,7 +47,7 @@ func main() {
 	}
 	top, err := imaging.Open(comdir + "/" + "back.png")
 	if err != nil {
-		log.Println("failed to open image:", err)
+		log.Fatalf("failed to open image:", err)
 	}
 	center, _ := imaging.Open(comdir + "/" + "center.jpg")
 	bottom, _ := imaging.Open(comdir + "/" + "bottom.jpg")
@@ -69,12 +69,12 @@ func main() {
 			log.Println("failed to open image:", err, file.Name())
 			continue
 		}
-		if src.Bounds().Dx() != 1242 || src.Bounds().Dy() != 1704 {
-			log.Println("siz err image:", file.Name())
+		if src.Bounds().Dx() != top.Bounds().Dx() || src.Bounds().Dy() != top.Bounds().Dy() {
+			log.Println("siz err image:", file.Name(), src.Bounds().Dx(), top.Bounds().Dx(), src.Bounds().Dy(), top.Bounds().Dy())
 			continue
 		}
 
-		dst := imaging.New(1242, 1704, color.NRGBA{0, 0, 0, 0})
+		dst := imaging.New(top.Bounds().Dx(), top.Bounds().Dy(), color.NRGBA{0, 0, 0, 0})
 		dst = imaging.Paste(dst, src, pt)
 		if top != nil {
 			log.Println("top ok")
@@ -86,7 +86,7 @@ func main() {
 		if bottom != nil {
 			dst = imaging.Overlay(dst, bottom, pt, 1)
 		}
-		err = imaging.Save(dst, filepath.Join(outdir, file.Name()))
+		err = imaging.Save(dst, filepath.Join(outdir, file.Name()), imaging.JPEGQuality(50))
 		if err != nil {
 			log.Fatalf("failed to save image: %v", err)
 		}
