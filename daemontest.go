@@ -10,6 +10,8 @@ import (
 )
 
 func main() {
+	f, err := os.OpenFile("aaa/aaa.txt", os.O_CREATE, os.ModeAppend)
+	fmt.Println(f, err)
 	flag.Parse()
 	bDaemon := flag.Bool("d", false, "is daemon")
 	fmt.Println(*bDaemon)

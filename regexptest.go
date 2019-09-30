@@ -9,6 +9,8 @@ import (
 )
 
 func main() {
+	a := strings.SplitN("aaaaaa     bbbbbbb", " ", 2)
+	fmt.Println(a, a[0], strings.TrimSpace(a[1]), len(a))
 	b, _ := regexp.MatchString("[a-z]", "1222")
 	fmt.Println(b)
 	b, _ = regexp.MatchString("[:alpha:]", "asdc")

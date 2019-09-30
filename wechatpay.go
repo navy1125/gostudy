@@ -45,7 +45,7 @@ func main() {
 		outdir = os.Args[2]
 		comdir = os.Args[3]
 	}
-	top, err := imaging.Open(comdir + "/" + "back.png")
+	top, err := imaging.Open("https://m.360buyimg.com/mobilecms/s748x1026_jfs/t23788/298/548979354/163074/4153cb04/5b35c9edNd6816582.jpg")
 	if err != nil {
 		log.Fatalf("failed to open image:", err)
 	}

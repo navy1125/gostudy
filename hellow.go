@@ -61,6 +61,13 @@ func parseGatewayTaskNullGateCmd(v interface{}) bool {
 	return true
 }
 func main() {
+	m := map[string]interface{}{}
+	m["whj"] = "whj"
+	x, _ := m["whj"].(int)
+	y := string(m["whj"])
+	fmt.Println("WWWWWWWWWWW", x, y)
+	f := float64(1.1)
+	fmt.Println("xxxxx:", int32(f))
 	a := uint32(10)
 	b := uint32(11)
 	fmt.Println("xxxxxxxxxxx", int64(4294967295), int64(math.Abs(float64(a-b))), syscall.SIGHUP)
