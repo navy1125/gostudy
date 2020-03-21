@@ -149,6 +149,7 @@ func main() {
 			select {
 			case result := <-ChanQueryResult:
 				result.W.Write([]byte(fmt.Sprintf("mysql_select return:%v", result.D)))
+				//数据库返回再让http回收
 				result.ChWait <- true
 			}
 		}
@@ -169,6 +170,7 @@ func mysql_select(w http.ResponseWriter, r *http.Request) {
 	ChWait := make(chan bool, 1)
 	db_mysql.Query2("select * from rms_role", w, r, ChWait, nil)
 	fmt.Println("mysql_select begin")
+	//这里hold住,等待数据库返回后再回客户端,默认是60秒超时
 	select {
 	case <-ChWait:
 		break
