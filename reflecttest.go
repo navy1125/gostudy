@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"reflect"
+	"strings"
 )
 
 func RoundPos(dep int32, cb func(r, x, y int32)) {
@@ -26,6 +27,11 @@ func RoundPos(dep int32, cb func(r, x, y int32)) {
 
 type Test struct {
 	X *int
+	y int
+}
+
+func (t *Test) Sstring() {
+	fmt.Println(t.y)
 }
 
 func main() {
@@ -34,6 +40,13 @@ func main() {
 	tt := reflect.New(reflect.ValueOf(tv).Type())
 	fmt.Println(tt.Type())
 	X := 2
+	fff := 1.3000
+	fmt.Printf("xxxxxx:%v,%s\n", fff, strings.Replace(".000000", ".000000$", "", -1))
+	xc := reflect.ValueOf(test).MethodByName("Sstring")
+	xc.Call([]reflect.Value{})
+	//fmt.Println("----------------------------", xc.CanAddr(), xc.CanSet(), xc.IsNil(), xc.IsValid(), xc.Type(), xc.Kind(), xc.Elem().Kind())
+	in := []reflect.Value{}
+	xc.Call(in)
 	xv := reflect.ValueOf(test).Elem().FieldByName("X")
 	fmt.Println("----------------------------", xv.CanAddr(), xv.CanSet(), xv.IsNil(), xv.IsValid(), xv.Type(), xv.Kind(), xv.Elem().Kind())
 	iv := reflect.ValueOf(&X)
@@ -56,7 +69,7 @@ func main() {
 	//ivn.Elem().SetInt(6)
 	//xv.Set(iv)
 	//xv.Elem().SetInt(3)
-	fmt.Println(reflect.ValueOf(test).Elem().FieldByName("X").Elem(), test.X)
+	fmt.Println(reflect.ValueOf(test).Elem().FieldByName("y"), *test.X)
 	xv.Set(iv)
 	/*
 		test1 := Test{}

@@ -48,6 +48,12 @@ type Struct1 struct {
 }
 
 func parseGatewayTaskNullGateCmd(v interface{}) bool {
+	if _, ok := v.(string); ok == true {
+		fmt.Println("aaaaaaaaaaa")
+	} else {
+		fmt.Println("kbbbbbbbbbb")
+	}
+	fmt.Println("kbbbbbbbbbb%v", reflect.TypeOf(v).String())
 	ss, ok := v.(*Struct1)
 	if ok == false || ss == nil {
 		fmt.Println("ssssssss")
@@ -61,13 +67,13 @@ func parseGatewayTaskNullGateCmd(v interface{}) bool {
 	return true
 }
 func main() {
+	parseGatewayTaskNullGateCmd(nil)
 	m := map[string]interface{}{}
 	m["whj"] = "whj"
-	x, _ := m["whj"].(int)
-	y := string(m["whj"])
-	fmt.Println("WWWWWWWWWWW", x, y)
 	f := float64(1.1)
-	fmt.Println("xxxxx:", int32(f))
+	var iiii uintptr
+	iiii = 10000000000000000000
+	fmt.Println("xxxxx:", int32(f), iiii)
 	a := uint32(10)
 	b := uint32(11)
 	fmt.Println("xxxxxxxxxxx", int64(4294967295), int64(math.Abs(float64(a-b))), syscall.SIGHUP)

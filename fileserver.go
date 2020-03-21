@@ -16,7 +16,7 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-	log.Fatal(http.ListenAndServe("192.168.1.6:8087", http.FileServer(http.Dir("/Users/whj/"))))
+	log.Fatal(http.ListenAndServe("127.0.0.1:8087", http.FileServer(http.Dir("/Users/whj/mygo/src/github.com/nebula-chat/nebula-chat.github.io/"))))
 	//http.Handle("/gostudy/", http.StripPrefix("/gostudy/", http.FileServer(http.Dir("D:\\work\\gostudy"))))
 	http.Handle("/bw/", http.StripPrefix("/bw/", http.FileServer(http.Dir("/home/whj/gogos/gameauth/game/bw"))))
 	http.HandleFunc("/post", postfunc)

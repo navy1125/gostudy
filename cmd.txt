@@ -1,3 +1,7 @@
+export GO111MODULE=on ;go get
+go clean -modcache
+rm go.sum
+go mod tidy
 go install -v -x -buildmode=shared runtime sync/atomic
 go install -v -x -buildmode=shared -linkshared
 go build -v -x -linkshared
